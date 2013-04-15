@@ -5,7 +5,7 @@ class Node:
 	weights = []
 	calculated_value = 0
 	
-	def __init___(self, ws):
+	def __init__(self, ws):
 		if ws == None:
 			self.weights = []
 		else:
@@ -18,12 +18,18 @@ class Node:
 	def calculate_value (self, input):
 		def weight_sum (a,b):
 			#take the first item off and put it on the back
-			w = weights.pop()
-			weights.append(w)
+			w = self.weights.pop(0)
+			
+			self.weights.append(w)
 			#sum with that weight * the corresponding input vector
-			return a + w*b
+		
+			return a + b*w
 				
 		cv = reduce(weight_sum, input, 0)
-		calculated_value = sigmoid(cv)
-		return calculated_value
 		
+		self.calculated_value = self.sigmoid(cv)
+
+		return self.calculated_value
+		
+
+
