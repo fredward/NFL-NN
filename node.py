@@ -16,13 +16,12 @@ class Node:
 		return 1/(1+exp(-x))
 	
 	def calculate_value (self, input):
+	
 		def weight_sum (a,b):
 			#take the first item off and put it on the back
 			w = self.weights.pop(0)
-			
 			self.weights.append(w)
 			#sum with that weight * the corresponding input vector
-		
 			return a + b*w
 				
 		cv = reduce(weight_sum, input, 0)
