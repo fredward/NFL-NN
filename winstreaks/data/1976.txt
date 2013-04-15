@@ -1,0 +1,28 @@
+New Orleans Saints,0,
+Pittsburgh Steelers,9,ConfChamp
+New England Patriots,6,Division
+Tampa Bay Buccaneers,0,
+Philadelphia Eagles,1,
+Houston Oilers,0,
+Cleveland Browns,0,
+Cincinnati Bengals,1,
+Oakland Raiders,10,Champions
+Buffalo Bills,0,
+New York Giants,0,
+Detroit Lions,0,
+St. Louis Cardinals,2,
+Chicago Bears,0,
+San Francisco 49ers,1,
+Washington Redskins,4,Division
+Seattle Seahawks,0,
+Los Angeles Rams,4,ConfChamp
+San Diego Chargers,0,
+Miami Dolphins,0,
+New York Jets,0,
+Baltimore Colts,1,Division
+Atlanta Falcons,0,
+Kansas City Chiefs,1,
+Denver Broncos,2,
+Green Bay Packers,1,
+Minnesota Vikings,2,SuperBowl
+Dallas Cowboys,0,Division

@@ -1,0 +1,32 @@
+New Orleans Saints,0,WildCard
+St. Louis Rams,0,
+New England Patriots,8,Division
+Tampa Bay Buccaneers,2,
+Philadelphia Eagles,0,WildCard
+Pittsburgh Steelers,2,SuperBowl
+Atlanta Falcons,1,Division
+Cleveland Browns,0,
+Cincinnati Bengals,0,
+Oakland Raiders,1,
+Buffalo Bills,0,
+New York Giants,1,
+Detroit Lions,4,
+Carolina Panthers,0,
+San Francisco 49ers,1,
+Indianapolis Colts,4,WildCard
+Seattle Seahawks,1,Division
+Arizona Cardinals,0,
+Houston Texans,1,
+Tennessee Titans,0,
+Jacksonville Jaguars,0,
+Chicago Bears,0,ConfChamp
+San Diego Chargers,1,
+Miami Dolphins,0,
+New York Jets,1,ConfChamp
+Baltimore Ravens,4,Division
+Kansas City Chiefs,0,WildCard
+Denver Broncos,0,
+Washington Redskins,0,
+Green Bay Packers,2,Champions
+Minnesota Vikings,0,
+Dallas Cowboys,1,
