@@ -4,9 +4,9 @@ from node import Node
 
 class Neural_Network:
 	
-	hidden_nodes = []
-	output_nodes = []	
-	
+	'''
+	instantiates lists of nodes for a 1 hidden layer neural network
+	'''
 	def __init__(self):
 		self.hidden_nodes = []
 		self.output_nodes = []
