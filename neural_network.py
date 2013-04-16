@@ -10,6 +10,7 @@ class Neural_Network:
 	def __init__(self):
 		self.hidden_nodes = []
 		self.output_nodes = []
+		
 	'''
 	static constructor for a neural network with random weigts from -0.1 to 0.1
 	'''
@@ -32,10 +33,21 @@ class Neural_Network:
 		hidden_values = reduce( lambda a,b: a + [b.calculate_value(input)], self.hidden_nodes, list() ) 
 		output_values = reduce( lambda a,b: a + [b.calculate_value(hidden_values)], self.output_nodes, list() ) 
 		return output_values
-	
+	'''
+	the back propagation algorithm
+	takes a output and a target and updates the weights via gradient descent
+	'''
+	def back_prop(self, output, target):
+		#pop through the targets and outputs and use them to set the deltas for each output node
+		map( lambda n: (n.set_delta((output.pop(0) - target.pop(0)) * (n.calculated_value*(1-n.calculated_value)))), self.output_nodes)	 
+		 	
 '''
 TESTING
 '''
 nn = Neural_Network.createWithRandomWeights(3,20,6)		
-print nn.feed_forward([1,2,3])
+res = nn.feed_forward([1,2,3])
+print res
+nn.back_prop(res, [0,0,0,1,0,0])
+for o in nn.output_nodes:
+	print o.delta
 	

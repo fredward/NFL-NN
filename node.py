@@ -3,14 +3,14 @@ from math import exp
 from random import randint
 class Node:
 	#the list of weights to be applied to the input
-	weights = []
-	calculated_value = 0
 	
 	def __init__(self, ws):
 		if ws == None:
 			self.weights = []
 		else:
 			self.weights = ws
+		self.calculated_value = 0
+		self.delta = 0
 	
 	'''
 	static constructor for a node with random weights from -0.1 to 0.1
@@ -47,9 +47,10 @@ class Node:
 
 			return self.calculated_value
 		else:
-			raise Exception("Too many inputs given")
+			raise Exception("Wrong number of inputs")
 	
-		
+	def set_delta(self, d):
+		self.delta = d	
 '''
 TESTING
 '''
