@@ -19,15 +19,17 @@ class Node:
 	def initWithRandomWeights(length):
 		ws = []
 		for i in range(length):
-			ws.append( (randint(0,20) - 10.0) / 100.0 )
+			ws.append( (randint(0,20)-10) / 10 )
 		return Node(ws)
 		
 	# the sigmoid	'rounds' if numbers are egregious
 	def sigmoid (self, x):
+		
 		if x > 100:
 			return 1
 		elif x < -100:
 			return 0
+		
 		return 1.0/(1.0+exp(-x))
 	
 	'''
@@ -35,6 +37,7 @@ class Node:
 	'''
 	def calculate_value (self, input):
 		if len(input) == len(self.weights):
+			'''
 			def weight_sum (a,b):
 				#take the first item off and put it on the back
 				w = self.weights.pop(0)
@@ -42,15 +45,23 @@ class Node:
 				#sum with that weight * the corresponding input vector
 				return a + b*w
 			cv = reduce(weight_sum, input, 0)
+			'''
+			cv = 0
+			for i in range(len(self.weights)):
+				cv += input[i]*self.weights[i]
+			
 			#store the calculated value in the node instance
 			self.calculated_value = self.sigmoid(cv)
-
+			
 			return self.calculated_value
 		else:
 			raise Exception("Wrong number of inputs")
 	
 	def set_delta(self, d):
 		self.delta = d	
+	
+	def inc_delta(self, d):
+		self.delta += d
 '''
 TESTING
 '''
