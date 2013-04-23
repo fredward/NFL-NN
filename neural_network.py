@@ -97,6 +97,7 @@ class Neural_Network:
 '''
 TESTING
 '''
+<<<<<<< HEAD
 nn = Neural_Network.createWithRandomWeights(4,20,2)		
 #learning and, xor
 for i in range(500):
@@ -120,6 +121,24 @@ for i in range(500):
 res = nn.feed_forward([1,1,1,0])
 print "End \tout: " + str(res) 	
 res = nn.feed_forward([0,1,0,0])
+=======
+nn = Neural_Network.createWithRandomWeights(3,15,1)		
+#attempting to learn 'true' for an input with one zero.
+for i in range(50000):
+	#nn=nn.back_prop([1,1,1], [1,1], .5)
+	nn=nn.back_prop([1,1,0], [1,0], .5)
+	nn=nn.back_prop([1,0,1], [0,1], .5)
+	nn=nn.back_prop([0,1,1], [0,1], .5)
+	nn=nn.back_prop([1,0,0], [0,0], .5)
+	nn=nn.back_prop([0,0,1], [0,1], .5)
+	nn=nn.back_prop([0,1,0], [0,0], .5)
+	#nn=nn.back_prop([0,0,0], [0,0], .5)
+	if i % 10000 == 0:
+		print "epoch: " + str(i) + " complete!"
+res = nn.feed_forward([1,1,1])
+print "End \tout: " + str(res) 	
+res = nn.feed_forward([0,0,0])
+>>>>>>> 8814dd77a035c26d7351de51922b7ebaaffa63f9
 print "End \tout: " + str(res)+ "\n"
 
 	
