@@ -2,6 +2,10 @@
 
 from node import Node
 from itertools import cycle
+
+'''
+A class that defines a one hidden layer Neural Network
+'''
 class Neural_Network:
 	
 	'''
@@ -93,21 +97,29 @@ class Neural_Network:
 '''
 TESTING
 '''
-nn = Neural_Network.createWithRandomWeights(3,15,1)		
-#attempting to learn 'true' for an input with one zero.
-for i in range(5000):
-	nn=nn.back_prop([1,1,1], [0], .5)
-	nn=nn.back_prop([1,1,0], [1], .5)
-	nn=nn.back_prop([1,0,1], [1], .5)
-	nn=nn.back_prop([0,1,1], [1], .5)
-	nn=nn.back_prop([1,0,0], [0], .5)
-	nn=nn.back_prop([0,0,1], [0], .5)
-	nn=nn.back_prop([0,1,0], [0], .5)
-	nn=nn.back_prop([0,0,0], [0], .5)
+nn = Neural_Network.createWithRandomWeights(4,20,2)		
+#learning and, xor
+for i in range(500):
+	nn=nn.back_prop([1,1,1,1], [1,0], .5)
+	nn=nn.back_prop([1,1,0,1], [1,1], .5)
+	nn=nn.back_prop([1,0,1,1], [0,0], .5)
+	nn=nn.back_prop([0,1,1,1], [0,0], .5)
+	#nn=nn.back_prop([1,1,1,0], [1,0], .5)
+	nn=nn.back_prop([1,1,0,0], [1,0], .5)
+	nn=nn.back_prop([1,0,1,0], [0,1], .5)
+	nn=nn.back_prop([0,1,1,0], [0,1], .5)
+	nn=nn.back_prop([1,0,0,1], [0,1], .5)
+	nn=nn.back_prop([0,0,1,1], [0,0], .5)
+	nn=nn.back_prop([0,1,0,1], [0,1], .5)
+	nn=nn.back_prop([0,0,0,1], [0,1], .5)
+	nn=nn.back_prop([1,0,0,0], [0,0], .5)
+	nn=nn.back_prop([0,0,1,0], [0,1], .5)
+	#nn=nn.back_prop([0,1,0,0], [0,0], .5)
+	nn=nn.back_prop([0,0,0,0], [0,0], .5)
 
-res = nn.feed_forward([1,1,0])
+res = nn.feed_forward([1,1,1,0])
 print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0])
+res = nn.feed_forward([0,1,0,0])
 print "End \tout: " + str(res)+ "\n"
 
 	
