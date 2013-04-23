@@ -121,5 +121,7 @@ res = nn.feed_forward([1,1,1,0])
 print "End \tout: " + str(res) 	
 res = nn.feed_forward([0,1,0,0])
 print "End \tout: " + str(res)+ "\n"
+res = nn.feed_forward([1,0,0,0])
+print "End \tout: " + str(res)+ "\n"
 
 	
