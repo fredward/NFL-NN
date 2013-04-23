@@ -95,19 +95,20 @@ TESTING
 '''
 nn = Neural_Network.createWithRandomWeights(3,15,1)		
 #attempting to learn 'true' for an input with one zero.
-for i in range(5000):
-	nn=nn.back_prop([1,1,1], [0], .5)
-	nn=nn.back_prop([1,1,0], [1], .5)
-	nn=nn.back_prop([1,0,1], [1], .5)
-	nn=nn.back_prop([0,1,1], [1], .5)
-	nn=nn.back_prop([1,0,0], [0], .5)
-	nn=nn.back_prop([0,0,1], [0], .5)
-	nn=nn.back_prop([0,1,0], [0], .5)
-	nn=nn.back_prop([0,0,0], [0], .5)
-
-res = nn.feed_forward([1,1,0])
+for i in range(50000):
+	#nn=nn.back_prop([1,1,1], [1,1], .5)
+	nn=nn.back_prop([1,1,0], [1,0], .5)
+	nn=nn.back_prop([1,0,1], [0,1], .5)
+	nn=nn.back_prop([0,1,1], [0,1], .5)
+	nn=nn.back_prop([1,0,0], [0,0], .5)
+	nn=nn.back_prop([0,0,1], [0,1], .5)
+	nn=nn.back_prop([0,1,0], [0,0], .5)
+	#nn=nn.back_prop([0,0,0], [0,0], .5)
+	if i % 10000 == 0:
+		print "epoch: " + str(i) + " complete!"
+res = nn.feed_forward([1,1,1])
 print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0])
+res = nn.feed_forward([0,0,0])
 print "End \tout: " + str(res)+ "\n"
 
 	
