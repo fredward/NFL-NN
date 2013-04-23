@@ -1,6 +1,6 @@
 '''
 A main file, for directing user input from the highest level. Will load and use
-all our other methods
+all our other classes
 '''
 
 '''
