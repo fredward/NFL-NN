@@ -45,7 +45,9 @@ class Neural_Network:
 	takes a output and a target and updates the weights via gradient descent
 	'''
 	def back_prop(self, input, target, learning_rate):
-		
+		 
+		# copy t so we can pop and not destroy our data
+		# target = t[:] 
 		#get the feed_forward output for the given input
 		output = self.feed_forward(input)
 		
@@ -87,7 +89,17 @@ class Neural_Network:
 		
 			
 		return new_nn
-		
+	
+	'''
+	Train on set of inputs and targets, for given # of epochs, with the given learning rate
+	'''
+	def train(self, epochs, inputs, targets, learning_rate):
+			for e in range(epochs):
+				print "epoch: %i" % (e+1)
+				for i,t in map(None, inputs, targets):
+					self = self.back_prop(i,t, learning_rate)
+					
+			return self
 '''
 TESTING
 '''
@@ -96,8 +108,8 @@ nn = Neural_Network.createWithRandomWeights(66,80,6)
 lr = 1.5
 
 # test 200 times over all the teams from 1971 and 1972
-for e in range(200):
-	for y in range(1971,1973):
+for e in range(1500):
+	for y in range(1970,2013):
 		print "epoch %i, year %i" % (e,y)
 		DL = Data_Loader.createFromYear(y)
 		for i in range(len(DL.inputs)):
@@ -105,8 +117,8 @@ for e in range(200):
 			#print "Target: " + str(DL.target[0]) + "\n"
 	
 	
-			nn=nn.back_prop(DL.inputs[i][:], DL.target[i][:], lr)
-	
+			nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
+	lr = lr * .9
 
 
 # summed, squared error
@@ -115,10 +127,10 @@ def error(o, t):
 
 
 # test over first 20 teams in 1972, and print the output, target, and error
-DL = Data_Loader.createFromYear(1972)
-for i in range(20):
+DL = Data_Loader.createFromYear(1995)
+for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
-	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+	#print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
 	print "Error: %f" % (error(res,DL.target[i]))
 
 '''

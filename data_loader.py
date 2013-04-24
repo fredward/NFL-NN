@@ -10,7 +10,8 @@ class Data_Loader:
 			self.year = random.randrange(1970, 2012)
 		else:
 			self.year = year
-			
+		# load the list of input vectors for a given year
+		# year is in the 2nd column of the csv file'''	
 		datafile = open('scaledData.csv', 'rU')
 		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
 		for row in datafile:
@@ -31,8 +32,7 @@ class Data_Loader:
 
 
 	
-	# load the list of input vectors for a given year
-	# year is in the 2nd column of the csv file'''
+
 	@staticmethod
 	def createFromRandomYear():
 		year = random.randrange(1970, 2012)
