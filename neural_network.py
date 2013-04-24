@@ -95,6 +95,7 @@ nn = Neural_Network.createWithRandomWeights(66,80,6)
 #attempting to learn 'true' for an input with one zero.
 lr = 1.5
 
+
 # test 200 times over all the teams from 1971 and 1972
 for e in range(200):
 	for y in range(1971,1973):
