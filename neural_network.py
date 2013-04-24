@@ -96,7 +96,7 @@ class Neural_Network:
 	def train(self, epochs, inputs, targets, learning_rate):
 			for e in range(epochs):
 				print "epoch: %i" % (e+1)
-				for i,t in map(None, inputs, targets):
+				for i,t in zip(inputs, targets):
 					self = self.back_prop(i,t, learning_rate)
 					
 			return self
