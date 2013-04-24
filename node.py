@@ -19,7 +19,8 @@ class Node:
 	def initWithRandomWeights(length):
 		ws = []
 		for i in range(length):
-			ws.append( (randint(0,20)-10) / 10 )
+			ws.append( (float(randint(0,20)-10)) / 10 )
+			
 		return Node(ws)
 		
 	# the sigmoid	'rounds' if numbers are egregious

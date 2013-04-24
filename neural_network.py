@@ -35,7 +35,9 @@ class Neural_Network:
 	note: a + [x] is list concatenation in python
 	'''
 	def feed_forward(self, input):
+		
 		hidden_values = reduce( lambda a,b: a + [b.calculate_value(input)], self.hidden_nodes, [] ) 
+		
 		output_values = reduce( lambda a,b: a + [b.calculate_value(hidden_values)], self.output_nodes, [] ) 
 		return output_values
 	'''
@@ -46,7 +48,7 @@ class Neural_Network:
 		
 		#get the feed_forward output for the given input
 		output = self.feed_forward(input)
-
+		
 		#pop through the error and use it to set the deltas for each output node
 		map( lambda n: (n.set_delta((target.pop(0) - output.pop(0)) * (n.calculated_value*(1-n.calculated_value)))), self.output_nodes)	 
 		
@@ -82,44 +84,43 @@ class Neural_Network:
 		'''
 		for h in self.hidden_nodes:
 			new_nn.hidden_nodes.append(Node( map( lambda w: w + ((i_cyc.next())*(h.delta)*(learning_rate)), h.weights)))
-			#print str(h.weights) + "\n"
+		
 			
 		return new_nn
 		
 '''
 TESTING
 '''
-nn = Neural_Network.createWithRandomWeights(66,100,6)		
+nn = Neural_Network.createWithRandomWeights(66,80,6)		
 #attempting to learn 'true' for an input with one zero.
-for i in range(10):
-	DL = Data_Loader.createFromRandomYear()
-	for i in range(len(DL.inputs)):
-		print "Inputs: " + str(DL.inputs[i]) + "\n"
-		print "Target: " + str(DL.target[i]) + "\n"
-		nn=nn.back_prop(DL.inputs[i], DL.target[i], .01)
-		pass
+lr = 1.5
 
-'''
-nn = Neural_Network.createWithRandomWeights(3,15,1)		
-#attempting to learn 'true' for an input with one zero.
-for i in range(2000):
-	nn=nn.back_prop([1,1,1], [0], .5)
-	nn=nn.back_prop([1,1,0], [1], .5)
-	nn=nn.back_prop([1,0,1], [1], .5)
-	nn=nn.back_prop([0,1,1], [1], .5)
-	nn=nn.back_prop([1,0,0], [0], .5)
-	nn=nn.back_prop([0,0,1], [0], .5)
-	nn=nn.back_prop([0,1,0], [0], .5)
-	nn=nn.back_prop([0,0,0], [0], .5)
+# test 200 times over all the teams from 1971 and 1972
+for e in range(200):
+	for y in range(1971,1973):
+		print "epoch %i, year %i" % (e,y)
+		DL = Data_Loader.createFromYear(y)
+		for i in range(len(DL.inputs)):
+			#print "Inputs: " + str(DL.inputs[0]) + "\n"
+			#print "Target: " + str(DL.target[0]) + "\n"
+	
+	
+			nn=nn.back_prop(DL.inputs[i][:], DL.target[i][:], lr)
+	
 
-'''
 
-DL = Data_Loader.createFromRandomYear()
-res = nn.feed_forward(DL.inputs[1])
-print "Result: " + str(res) +"\nTarget: " + str(DL.target[1])
-#print "End \tout: " + str(res) 	
-#res = nn.feed_forward([0,1,0])
-#print "End \tout: " + str(res)+ "\n"
+# summed, squared error
+def error(o, t):
+	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
+
+
+# test over first 20 teams in 1972, and print the output, target, and error
+DL = Data_Loader.createFromYear(1972)
+for i in range(20):
+	res = nn.feed_forward(DL.inputs[i])
+	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+	print "Error: %f" % (error(res,DL.target[i]))
+
 '''
 nn = Neural_Network.createWithRandomWeights(4,20,2)		
 #learning and, xor
@@ -147,5 +148,19 @@ res = nn.feed_forward([0,1,0,0])
 print "End \tout: " + str(res)+ "\n"
 res = nn.feed_forward([1,0,0,0])
 print "End \tout: " + str(res)+ "\n"
+'''
+'''
+nn = Neural_Network.createWithRandomWeights(3,15,1)		
+#attempting to learn 'true' for an input with one zero.
+for i in range(2000):
+	nn=nn.back_prop([1,1,1], [0], .5)
+	nn=nn.back_prop([1,1,0], [1], .5)
+	nn=nn.back_prop([1,0,1], [1], .5)
+	nn=nn.back_prop([0,1,1], [1], .5)
+	nn=nn.back_prop([1,0,0], [0], .5)
+	nn=nn.back_prop([0,0,1], [0], .5)
+	nn=nn.back_prop([0,1,0], [0], .5)
+	nn=nn.back_prop([0,0,0], [0], .5)
+
 '''
 	
