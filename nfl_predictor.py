@@ -10,7 +10,7 @@ class NFL_Predictor:
     '''
     create a predictor class
     Parameters:
-        network_path:   file path of saved neural network
+        network_path:	file path of saved neural network
     '''
     def __init__(self, network):
         self.nn = network
