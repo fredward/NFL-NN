@@ -44,10 +44,10 @@ class Neural_Network:
 	the back propagation algorithm
 	takes a output and a target and updates the weights via gradient descent
 	'''
-	def back_prop(self, input, target, learning_rate):
+	def back_prop(self, input, t, learning_rate):
 		 
 		# copy t so we can pop and not destroy our data
-		# target = t[:] 
+		target = t[:] 
 		#get the feed_forward output for the given input
 		output = self.feed_forward(input)
 		
@@ -97,17 +97,27 @@ class Neural_Network:
 			for e in range(epochs):
 				print "epoch: %i" % (e+1)
 				for i,t in zip(inputs, targets):
+					#print "%f, %s" % (learning_rate(t), t)
 					self = self.back_prop(i,t, learning_rate)
 					
 			return self
 '''
 TESTING
 '''
-nn = Neural_Network.createWithRandomWeights(66,80,6)		
-#attempting to learn 'true' for an input with one zero.
+nn = Neural_Network.createWithRandomWeights(66,150,6)		
+
+
+# train! with learning rate proportional to # of teams in the situations
+inputs = []
+targets = []
+for y in range(1971,1973):
+	DL = Data_Loader.createFromYear(y)
+	inputs += DL.inputs
+	targets += DL.target 
+	#print targets
+nn = nn.train(20,inputs,targets,1.5)
+'''
 lr = 1.5
-
-
 # test 200 times over all the teams from 1971 and 1972
 for e in range(1500):
 	for y in range(1970,2013):
@@ -121,17 +131,17 @@ for e in range(1500):
 			nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
 	lr = lr * .9
 
-
+'''
 # summed, squared error
 def error(o, t):
 	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
 
 
 # test over first 20 teams in 1972, and print the output, target, and error
-DL = Data_Loader.createFromYear(1995)
+DL = Data_Loader.createFromYear(1972)
 for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
-	#print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
 	print "Error: %f" % (error(res,DL.target[i]))
 
 '''
