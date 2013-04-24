@@ -2,6 +2,7 @@
 
 from node import Node
 from itertools import cycle
+from data_loader import Data_Loader
 class Neural_Network:
 	
 	'''
@@ -26,8 +27,8 @@ class Neural_Network:
 		
 		
 	'''
-  feed the input values forward, and return the result
-  note: a + [x] is list concatenation in python
+	feed the input values forward, and return the result
+	note: a + [x] is list concatenation in python
 	'''
 	def feed_forward(self, input):
 		hidden_values = reduce( lambda a,b: a + [b.calculate_value(input)], self.hidden_nodes, [] ) 
@@ -40,6 +41,7 @@ class Neural_Network:
 	def back_prop(self, input, target, learning_rate):
 		#pop through the error and use it to set the deltas for each output node
 		output = self.feed_forward(input)
+		print "Output: " + str(output) + "\n"
 		map( lambda n: (n.set_delta((target.pop(0) - output.pop(0)) * (n.calculated_value*(1-n.calculated_value)))), self.output_nodes)	 
 		
 		'''
@@ -70,6 +72,7 @@ class Neural_Network:
 		h_cyc = cycle(self.hidden_nodes)
 		i_cyc = cycle(input)
 		
+		#print "output weights: "
 		for o in self.output_nodes:
 			'''	
 			new_w = []
@@ -77,8 +80,10 @@ class Neural_Network:
 				new_w.append( o.weights[i] + ((h_cyc.next().calculated_value)*(o.delta)*(learning_rate)) )
 			new_nn.output_nodes.append( Node( new_w ) )
 			'''
+			#print str(o.weights) + "\n"
 			new_nn.output_nodes.append(Node( map( lambda w: w + ((h_cyc.next().calculated_value)*(o.delta)*(learning_rate)), o.weights)))
 			
+		#print "hidden weights: "
 		for h in self.hidden_nodes:
 			'''
 			new_w = []
@@ -87,15 +92,27 @@ class Neural_Network:
 			new_nn.hidden_nodes.append( Node( new_w ) )
 			'''
 			new_nn.hidden_nodes.append(Node( map( lambda w: w + ((i_cyc.next())*(h.delta)*(learning_rate)), h.weights)))
+			#print str(h.weights) + "\n"
 			
 		return new_nn
 		
 '''
 TESTING
 '''
+nn = Neural_Network.createWithRandomWeights(66,100,6)		
+#attempting to learn 'true' for an input with one zero.
+for i in range(10):
+	DL = Data_Loader.createFromRandomYear()
+	for i in range(len(DL.inputs)):
+		print "Inputs: " + str(DL.inputs[i]) + "\n"
+		print "Target: " + str(DL.target[i]) + "\n"
+		nn=nn.back_prop(DL.inputs[i], DL.target[i], .01)
+		pass
+
+'''
 nn = Neural_Network.createWithRandomWeights(3,15,1)		
 #attempting to learn 'true' for an input with one zero.
-for i in range(5000):
+for i in range(2000):
 	nn=nn.back_prop([1,1,1], [0], .5)
 	nn=nn.back_prop([1,1,0], [1], .5)
 	nn=nn.back_prop([1,0,1], [1], .5)
@@ -105,9 +122,13 @@ for i in range(5000):
 	nn=nn.back_prop([0,1,0], [0], .5)
 	nn=nn.back_prop([0,0,0], [0], .5)
 
-res = nn.feed_forward([1,1,0])
-print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0])
-print "End \tout: " + str(res)+ "\n"
+'''
+
+DL = Data_Loader.createFromRandomYear()
+res = nn.feed_forward(DL.inputs[1])
+print "Result: " + str(res) +"\nTarget: " + str(DL.target[1])
+#print "End \tout: " + str(res) 	
+#res = nn.feed_forward([0,1,0])
+#print "End \tout: " + str(res)+ "\n"
 
 	

@@ -34,6 +34,7 @@ class Node:
 	
 	'''
 	calculate the activation value of the node given the input vector (and store it)
+	sum the inputs multiplied by the weights
 	'''
 	def calculate_value (self, input):
 		if len(input) == len(self.weights):
