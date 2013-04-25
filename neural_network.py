@@ -132,7 +132,6 @@ if __name__ == "main":
 	inputs = []
 	targets = []
 	for y in range(1971,1973):
->>>>>>> fafba5ee399a5807d38e65cfc37b1232042e06bb
 		DL = Data_Loader.createFromYear(y)
 		inputs += DL.inputs
 		targets += DL.target 
