@@ -3,6 +3,7 @@
 from node import Node
 from itertools import cycle
 from data_loader import Data_Loader
+import cPickle as pickle
 
 '''
 A class that defines a one hidden layer Neural Network
@@ -101,12 +102,30 @@ class Neural_Network:
 					self = self.back_prop(i,t, learning_rate)
 					
 			return self
+
+	'''
+	Using Python's built in pickle module, we can save the neural network as an object in a file
+	'''
+	def saveToFile (nn, filename):
+		file = open (filename, 'w')
+		pickle.dump(nn, file)
+		file.close()
+
+	'''
+	Also using pickle, we can use the saved neural network
+	'''
+	@staticmethod
+	def createFromFile (filename):
+		file = open (filename, 'r')
+		self = pickle.load (file)
+		return self		
+				
 '''
 TESTING
 '''
 nn = Neural_Network.createWithRandomWeights(66,150,6)		
 
-
+'''
 # train! with learning rate proportional to # of teams in the situations
 inputs = []
 targets = []
@@ -116,6 +135,7 @@ for y in range(1971,1973):
 	targets += DL.target 
 	#print targets
 nn = nn.train(20,inputs,targets,1.5)
+'''
 '''
 lr = 1.5
 # test 200 times over all the teams from 1971 and 1972
@@ -132,6 +152,7 @@ for e in range(1500):
 	lr = lr * .9
 
 '''
+'''
 # summed, squared error
 def error(o, t):
 	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
@@ -143,7 +164,7 @@ for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
 	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
 	print "Error: %f" % (error(res,DL.target[i]))
-
+'''
 '''
 nn = Neural_Network.createWithRandomWeights(4,20,2)		
 #learning and, xor
@@ -185,5 +206,19 @@ for i in range(2000):
 	nn=nn.back_prop([0,1,0], [0], .5)
 	nn=nn.back_prop([0,0,0], [0], .5)
 
+res = nn.feed_forward([1,1,1])
+print "End \tout: " + str(res) 	
+res = nn.feed_forward([0,1,0])
+print "End \tout: " + str(res)+ "\n"
+res = nn.feed_forward([1,0,1])
+print "End \tout: " + str(res)+ "\n"
+
 '''
-	
+nn = Neural_Network.createFromFile('res')
+
+res = nn.feed_forward([1,1,1])
+print "End \tout: " + str(res) 	
+res = nn.feed_forward([0,1,0])
+print "End \tout: " + str(res)+ "\n"
+res = nn.feed_forward([1,0,1])
+print "End \tout: " + str(res)+ "\n"
