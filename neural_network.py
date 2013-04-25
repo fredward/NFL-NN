@@ -117,108 +117,94 @@ class Neural_Network:
 	@staticmethod
 	def createFromFile (filename):
 		file = open (filename, 'r')
-		self = pickle.load (file)
-		return self		
+		nn = pickle.load (file)
+		return nn	
 				
 '''
 TESTING
 '''
-nn = Neural_Network.createWithRandomWeights(66,150,6)		
 
-'''
-# train! with learning rate proportional to # of teams in the situations
-inputs = []
-targets = []
-for y in range(1971,1973):
-	DL = Data_Loader.createFromYear(y)
-	inputs += DL.inputs
-	targets += DL.target 
-	#print targets
-nn = nn.train(20,inputs,targets,1.5)
-'''
-'''
-lr = 1.5
-# test 200 times over all the teams from 1971 and 1972
-for e in range(1500):
-	for y in range(1970,2013):
-		print "epoch %i, year %i" % (e,y)
+if __name__ == "main":
+	nn = Neural_Network.createWithRandomWeights(66,150,6)		
+	
+	
+	# train! with learning rate proportional to # of teams in the situations
+	inputs = []
+	targets = []
+	for y in range(1971,1973):
+>>>>>>> fafba5ee399a5807d38e65cfc37b1232042e06bb
 		DL = Data_Loader.createFromYear(y)
-		for i in range(len(DL.inputs)):
-			#print "Inputs: " + str(DL.inputs[0]) + "\n"
-			#print "Target: " + str(DL.target[0]) + "\n"
+		inputs += DL.inputs
+		targets += DL.target 
+		#print targets
+	nn = nn.train(20,inputs,targets,1.5)
+	'''
+	lr = 1.5
+	# test 200 times over all the teams from 1971 and 1972
+	for e in range(1500):
+		for y in range(1970,2013):
+			print "epoch %i, year %i" % (e,y)
+			DL = Data_Loader.createFromYear(y)
+			for i in range(len(DL.inputs)):
+				#print "Inputs: " + str(DL.inputs[0]) + "\n"
+				#print "Target: " + str(DL.target[0]) + "\n"
+		
+		
+				nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
+		lr = lr * .9
 	
+	'''
+	# summed, squared error
+	def error(o, t):
+		return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
+
 	
-			nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
-	lr = lr * .9
-
-'''
-'''
-# summed, squared error
-def error(o, t):
-	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
-
-
-# test over first 20 teams in 1972, and print the output, target, and error
-DL = Data_Loader.createFromYear(1972)
-for i in range(len(DL.inputs)):
-	res = nn.feed_forward(DL.inputs[i])
-	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
-	print "Error: %f" % (error(res,DL.target[i]))
-'''
-'''
-nn = Neural_Network.createWithRandomWeights(4,20,2)		
-#learning and, xor
-for i in range(1000):
-	nn=nn.back_prop([1,1,1,1], [1,0], 2)
-	nn=nn.back_prop([1,1,0,1], [1,1], 2)
-	nn=nn.back_prop([1,0,1,1], [0,0], 2)
-	nn=nn.back_prop([0,1,1,1], [0,0], 2)
-	#nn=nn.back_prop([1,1,1,0], [1,1], 2)
-	nn=nn.back_prop([1,1,0,0], [1,0], 2)
-	nn=nn.back_prop([1,0,1,0], [0,1], 2)
-	nn=nn.back_prop([0,1,1,0], [0,1], 2)
-	nn=nn.back_prop([1,0,0,1], [0,1], 2)
-	nn=nn.back_prop([0,0,1,1], [0,0], 2)
-	nn=nn.back_prop([0,1,0,1], [0,1], 2)
-	nn=nn.back_prop([0,0,0,1], [0,1], 2)
-	nn=nn.back_prop([1,0,0,0], [0,0], 2)
-	nn=nn.back_prop([0,0,1,0], [0,1], 2)
-	#nn=nn.back_prop([0,1,0,0], [0,0], 2)
-	nn=nn.back_prop([0,0,0,0], [0,0], 2)
-
-res = nn.feed_forward([1,1,1,0])
-print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0,0])
-print "End \tout: " + str(res)+ "\n"
-res = nn.feed_forward([1,0,0,0])
-print "End \tout: " + str(res)+ "\n"
-'''
-'''
-nn = Neural_Network.createWithRandomWeights(3,15,1)		
-#attempting to learn 'true' for an input with one zero.
-for i in range(2000):
-	nn=nn.back_prop([1,1,1], [0], .5)
-	nn=nn.back_prop([1,1,0], [1], .5)
-	nn=nn.back_prop([1,0,1], [1], .5)
-	nn=nn.back_prop([0,1,1], [1], .5)
-	nn=nn.back_prop([1,0,0], [0], .5)
-	nn=nn.back_prop([0,0,1], [0], .5)
-	nn=nn.back_prop([0,1,0], [0], .5)
-	nn=nn.back_prop([0,0,0], [0], .5)
-
-res = nn.feed_forward([1,1,1])
-print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0])
-print "End \tout: " + str(res)+ "\n"
-res = nn.feed_forward([1,0,1])
-print "End \tout: " + str(res)+ "\n"
-
-'''
-nn = Neural_Network.createFromFile('res')
-
-res = nn.feed_forward([1,1,1])
-print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0])
-print "End \tout: " + str(res)+ "\n"
-res = nn.feed_forward([1,0,1])
-print "End \tout: " + str(res)+ "\n"
+	# test over first 20 teams in 1972, and print the output, target, and error
+	DL = Data_Loader.createFromYear(1972)
+	for i in range(len(DL.inputs)):
+		res = nn.feed_forward(DL.inputs[i])
+		print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+		print "Error: %f" % (error(res,DL.target[i]))
+	
+	'''
+	nn = Neural_Network.createWithRandomWeights(4,20,2)		
+	#learning and, xor
+	for i in range(1000):
+		nn=nn.back_prop([1,1,1,1], [1,0], 2)
+		nn=nn.back_prop([1,1,0,1], [1,1], 2)
+		nn=nn.back_prop([1,0,1,1], [0,0], 2)
+		nn=nn.back_prop([0,1,1,1], [0,0], 2)
+		#nn=nn.back_prop([1,1,1,0], [1,1], 2)
+		nn=nn.back_prop([1,1,0,0], [1,0], 2)
+		nn=nn.back_prop([1,0,1,0], [0,1], 2)
+		nn=nn.back_prop([0,1,1,0], [0,1], 2)
+		nn=nn.back_prop([1,0,0,1], [0,1], 2)
+		nn=nn.back_prop([0,0,1,1], [0,0], 2)
+		nn=nn.back_prop([0,1,0,1], [0,1], 2)
+		nn=nn.back_prop([0,0,0,1], [0,1], 2)
+		nn=nn.back_prop([1,0,0,0], [0,0], 2)
+		nn=nn.back_prop([0,0,1,0], [0,1], 2)
+		#nn=nn.back_prop([0,1,0,0], [0,0], 2)
+		nn=nn.back_prop([0,0,0,0], [0,0], 2)
+	
+	res = nn.feed_forward([1,1,1,0])
+	print "End \tout: " + str(res) 	
+	res = nn.feed_forward([0,1,0,0])
+	print "End \tout: " + str(res)+ "\n"
+	res = nn.feed_forward([1,0,0,0])
+	print "End \tout: " + str(res)+ "\n"
+	'''
+	'''
+	nn = Neural_Network.createWithRandomWeights(3,15,1)		
+	#attempting to learn 'true' for an input with one zero.
+	for i in range(2000):
+		nn=nn.back_prop([1,1,1], [0], .5)
+		nn=nn.back_prop([1,1,0], [1], .5)
+		nn=nn.back_prop([1,0,1], [1], .5)
+		nn=nn.back_prop([0,1,1], [1], .5)
+		nn=nn.back_prop([1,0,0], [0], .5)
+		nn=nn.back_prop([0,0,1], [0], .5)
+		nn=nn.back_prop([0,1,0], [0], .5)
+		nn=nn.back_prop([0,0,0], [0], .5)
+	
+	'''
