@@ -98,7 +98,9 @@ class Neural_Network:
 				print "epoch: %i" % (e+1)
 				for i,t in zip(inputs, targets):
 					#print "%f, %s" % (learning_rate(t), t)
-					self = self.back_prop(i,t, learning_rate)
+					for c in range(learning_rate[t.index(1)]):
+						
+						self = self.back_prop(i,t, .05)
 					
 			return self
 '''
@@ -110,12 +112,22 @@ nn = Neural_Network.createWithRandomWeights(66,150,6)
 # train! with learning rate proportional to # of teams in the situations
 inputs = []
 targets = []
-for y in range(1971,1973):
+# 20, 4, 4, 2, 1, 1
+cases = {
+	0 : 1,
+	1 : 5,
+	2 : 5,
+	3 : 10,
+	4 : 20,
+	5 : 20
+}
+		
+for y in range(2000,2003):
 	DL = Data_Loader.createFromYear(y)
 	inputs += DL.inputs
 	targets += DL.target 
 	#print targets
-nn = nn.train(20,inputs,targets,1.5)
+nn = nn.train(300,inputs,targets,cases)
 '''
 lr = 1.5
 # test 200 times over all the teams from 1971 and 1972
@@ -138,7 +150,7 @@ def error(o, t):
 
 
 # test over first 20 teams in 1972, and print the output, target, and error
-DL = Data_Loader.createFromYear(1972)
+DL = Data_Loader.createFromYear(2001)
 for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
 	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
