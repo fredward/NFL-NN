@@ -3,6 +3,7 @@
 from node import Node
 from itertools import cycle
 from data_loader import Data_Loader
+import cPickle as pickle
 
 '''
 A class that defines a one hidden layer Neural Network
@@ -103,99 +104,110 @@ class Neural_Network:
 						self = self.back_prop(i,t, .05)
 					
 			return self
+
+	'''
+	Using Python's built in pickle module, we can save the neural network as an object in a file
+	'''
+	def saveToFile (nn, filename):
+		file = open (filename, 'w')
+		pickle.dump(nn, file)
+		file.close()
+
+	'''
+	Also using pickle, we can use the saved neural network
+	'''
+	@staticmethod
+	def createFromFile (filename):
+		file = open (filename, 'r')
+		nn = pickle.load (file)
+		return nn	
+				
 '''
 TESTING
 '''
-nn = Neural_Network.createWithRandomWeights(66,150,6)		
 
 
-# train! with learning rate proportional to # of teams in the situations
-inputs = []
-targets = []
-# 20, 4, 4, 2, 1, 1
-cases = {
-	0 : 1,
-	1 : 5,
-	2 : 5,
-	3 : 10,
-	4 : 20,
-	5 : 20
-}
-		
-for y in range(2000,2003):
-	DL = Data_Loader.createFromYear(y)
-	inputs += DL.inputs
-	targets += DL.target 
-	#print targets
-nn = nn.train(300,inputs,targets,cases)
-'''
-lr = 1.5
-# test 200 times over all the teams from 1971 and 1972
-for e in range(1500):
-	for y in range(1970,2013):
-		print "epoch %i, year %i" % (e,y)
+if __name__ == "main":
+	nn = Neural_Network.createWithRandomWeights(66,150,6)		
+	
+	
+	# train! with learning rate proportional to # of teams in the situations
+	inputs = []
+	targets = []
+	for y in range(1971,1973):
 		DL = Data_Loader.createFromYear(y)
-		for i in range(len(DL.inputs)):
-			#print "Inputs: " + str(DL.inputs[0]) + "\n"
-			#print "Target: " + str(DL.target[0]) + "\n"
+		inputs += DL.inputs
+		targets += DL.target 
+		#print targets
+	nn = nn.train(20,inputs,targets,1.5)
+	'''
+	lr = 1.5
+	# test 200 times over all the teams from 1971 and 1972
+	for e in range(1500):
+		for y in range(1970,2013):
+			print "epoch %i, year %i" % (e,y)
+			DL = Data_Loader.createFromYear(y)
+			for i in range(len(DL.inputs)):
+				#print "Inputs: " + str(DL.inputs[0]) + "\n"
+				#print "Target: " + str(DL.target[0]) + "\n"
+		
+		
+				nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
+		lr = lr * .9
 	
+	'''
+	# summed, squared error
+	def error(o, t):
+		return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
+
+
 	
-			nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
-	lr = lr * .9
-
-'''
-# summed, squared error
-def error(o, t):
-	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
-
-
-# test over first 20 teams in 1972, and print the output, target, and error
-DL = Data_Loader.createFromYear(2001)
-for i in range(len(DL.inputs)):
-	res = nn.feed_forward(DL.inputs[i])
-	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
-	print "Error: %f" % (error(res,DL.target[i]))
-
-'''
-nn = Neural_Network.createWithRandomWeights(4,20,2)		
-#learning and, xor
-for i in range(1000):
-	nn=nn.back_prop([1,1,1,1], [1,0], 2)
-	nn=nn.back_prop([1,1,0,1], [1,1], 2)
-	nn=nn.back_prop([1,0,1,1], [0,0], 2)
-	nn=nn.back_prop([0,1,1,1], [0,0], 2)
-	#nn=nn.back_prop([1,1,1,0], [1,1], 2)
-	nn=nn.back_prop([1,1,0,0], [1,0], 2)
-	nn=nn.back_prop([1,0,1,0], [0,1], 2)
-	nn=nn.back_prop([0,1,1,0], [0,1], 2)
-	nn=nn.back_prop([1,0,0,1], [0,1], 2)
-	nn=nn.back_prop([0,0,1,1], [0,0], 2)
-	nn=nn.back_prop([0,1,0,1], [0,1], 2)
-	nn=nn.back_prop([0,0,0,1], [0,1], 2)
-	nn=nn.back_prop([1,0,0,0], [0,0], 2)
-	nn=nn.back_prop([0,0,1,0], [0,1], 2)
-	#nn=nn.back_prop([0,1,0,0], [0,0], 2)
-	nn=nn.back_prop([0,0,0,0], [0,0], 2)
-
-res = nn.feed_forward([1,1,1,0])
-print "End \tout: " + str(res) 	
-res = nn.feed_forward([0,1,0,0])
-print "End \tout: " + str(res)+ "\n"
-res = nn.feed_forward([1,0,0,0])
-print "End \tout: " + str(res)+ "\n"
-'''
-'''
-nn = Neural_Network.createWithRandomWeights(3,15,1)		
-#attempting to learn 'true' for an input with one zero.
-for i in range(2000):
-	nn=nn.back_prop([1,1,1], [0], .5)
-	nn=nn.back_prop([1,1,0], [1], .5)
-	nn=nn.back_prop([1,0,1], [1], .5)
-	nn=nn.back_prop([0,1,1], [1], .5)
-	nn=nn.back_prop([1,0,0], [0], .5)
-	nn=nn.back_prop([0,0,1], [0], .5)
-	nn=nn.back_prop([0,1,0], [0], .5)
-	nn=nn.back_prop([0,0,0], [0], .5)
-
-'''
+	# test over first 20 teams in 1972, and print the output, target, and error
+	DL = Data_Loader.createFromYear(1972)
+	for i in range(len(DL.inputs)):
+		res = nn.feed_forward(DL.inputs[i])
+		print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+		print "Error: %f" % (error(res,DL.target[i]))
 	
+	'''
+	nn = Neural_Network.createWithRandomWeights(4,20,2)		
+	#learning and, xor
+	for i in range(1000):
+		nn=nn.back_prop([1,1,1,1], [1,0], 2)
+		nn=nn.back_prop([1,1,0,1], [1,1], 2)
+		nn=nn.back_prop([1,0,1,1], [0,0], 2)
+		nn=nn.back_prop([0,1,1,1], [0,0], 2)
+		#nn=nn.back_prop([1,1,1,0], [1,1], 2)
+		nn=nn.back_prop([1,1,0,0], [1,0], 2)
+		nn=nn.back_prop([1,0,1,0], [0,1], 2)
+		nn=nn.back_prop([0,1,1,0], [0,1], 2)
+		nn=nn.back_prop([1,0,0,1], [0,1], 2)
+		nn=nn.back_prop([0,0,1,1], [0,0], 2)
+		nn=nn.back_prop([0,1,0,1], [0,1], 2)
+		nn=nn.back_prop([0,0,0,1], [0,1], 2)
+		nn=nn.back_prop([1,0,0,0], [0,0], 2)
+		nn=nn.back_prop([0,0,1,0], [0,1], 2)
+		#nn=nn.back_prop([0,1,0,0], [0,0], 2)
+		nn=nn.back_prop([0,0,0,0], [0,0], 2)
+	
+	res = nn.feed_forward([1,1,1,0])
+	print "End \tout: " + str(res) 	
+	res = nn.feed_forward([0,1,0,0])
+	print "End \tout: " + str(res)+ "\n"
+	res = nn.feed_forward([1,0,0,0])
+	print "End \tout: " + str(res)+ "\n"
+	'''
+	'''
+	nn = Neural_Network.createWithRandomWeights(3,15,1)		
+	#attempting to learn 'true' for an input with one zero.
+	for i in range(2000):
+		nn=nn.back_prop([1,1,1], [0], .5)
+		nn=nn.back_prop([1,1,0], [1], .5)
+		nn=nn.back_prop([1,0,1], [1], .5)
+		nn=nn.back_prop([0,1,1], [1], .5)
+		nn=nn.back_prop([1,0,0], [0], .5)
+		nn=nn.back_prop([0,0,1], [0], .5)
+		nn=nn.back_prop([0,1,0], [0], .5)
+		nn=nn.back_prop([0,0,0], [0], .5)
+	
+	'''
