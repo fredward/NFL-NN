@@ -125,8 +125,33 @@ class Neural_Network:
 '''
 TESTING
 '''
+# summed, squared error
+def error(o, t):
+	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
 
-
+nn = Neural_Network.createFromFile("savedWeights.txt")
+DL = Data_Loader.createFromYear(2011)
+for i in range(len(DL.inputs)):
+	res = nn.feed_forward(DL.inputs[i])
+	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+	print "Error: %f" % (error(res,DL.target[i]))
+'''
+lr = 1.5
+# test 200 times over all the teams from 1971 and 1972
+for e in range(30):
+	nn = Neural_Network.createFromFile("savedWeights.txt")
+	for y in range(1970,2011):
+		print "epoch %i, year %i" % (e,y)
+		DL = Data_Loader.createFromYear(y)
+		for i in range(len(DL.inputs)):
+			#print "Inputs: " + str(DL.inputs[0]) + "\n"
+			#print "Target: " + str(DL.target[0]) + "\n"
+	
+	
+			nn=nn.back_prop(DL.inputs[i], DL.target[i], .5)
+	lr = lr * .9
+	Neural_Network.saveToFile(nn, "savedWeights.txt")
+'''
 if __name__ == "main":
 	nn = Neural_Network.createWithRandomWeights(66,150,6)		
 	
