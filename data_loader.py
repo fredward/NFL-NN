@@ -72,19 +72,6 @@ class Data_Loader:
 		return teams
 	
 
-	@staticmethod
-	def createFromRandomYear():
-		year = random.randrange(1970, 2012)
-		DL = Data_Loader(year)
-				
-		return DL
-		
-	@staticmethod
-	def createFromYear(year):
-		
-		DL = Data_Loader(year)
-				
-		return DL
 
 
 '''
