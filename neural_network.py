@@ -152,21 +152,19 @@ for e in range(30):
 	Neural_Network.saveToFile(nn, "savedWeights.txt")
 '''
 if __name__ == "__main__":
-	nn = Neural_Network.createWithRandomWeights(66,150,6)		
+	nn = Neural_Network.createWithRandomWeights(66,40,6)		
 	
 	
 	# train! with learning rate proportional to # of teams in the situations
 	inputs = []
 	targets = []
 	for y in range(1971,1973):
-		DL = Data_Loader.createFromYear(y)
-		i,t = DL.getBalancedTargets()
-		print i 
-		print t
+		DL = Data_Loader()
+		i,t = DL.getTargets(y)
 		inputs += i
 		targets += t 
 		#print targets
-	nn = nn.train(5000,inputs,targets,1.5)
+	nn = nn.train(10,inputs,targets,1.5)
 	'''
 	lr = 1.5
 	# test 200 times over all the teams from 1971 and 1972
@@ -183,17 +181,20 @@ if __name__ == "__main__":
 		lr = lr * .9
 	'''
 	# summed, squared error
-	def error(o, t):
-		return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
+	def error(o, t1):
+		z = zip(o,t1)
+		return float(reduce(lambda a,b: a + (float(b[0]) - float(b[1]))**2, z, 0.0))
 
 
 	
-	# test over first 20 teams in 1972, and print the output, target, and error
-	DL = Data_Loader.createFromYear(1972)
-	for i in range(len(DL.inputs)):
-		res = nn.feed_forward(DL.inputs[i])
-		print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.targets[i]))
-		print "Error: %f" % (error(res,DL.targets[i]))
+	# test over all teams from 1972, and print the output, target, and error
+	i,t = DL.getTargets(1972)
+	t = t.__iter__()
+	for input in i:
+		res = nn.feed_forward(input)
+		target = t.next()
+		print "\nTeam %i\nResult: %s\nTarget: %s" % (0,str(res),str(target))
+		print "Error: %f" % (error(res,target))
 	
 	'''
 	nn = Neural_Network.createWithRandomWeights(4,20,2)		
