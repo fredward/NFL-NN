@@ -1,11 +1,18 @@
 import csv
 import random
 
+'''
+TODO:
+	Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
+	for fast access each time its needed (i.e. not having to re-read through the whole csv file)
+'''
+
 class Data_Loader:
 
 	def __init__(self, year):
+		self.class_dict = {}
 		self.inputs = []
-		self.target = []
+		self.targets = []
 		if year == None:
 			self.year = random.randrange(1970, 2012)
 		else:
@@ -25,12 +32,28 @@ class Data_Loader:
 				#print "Row :" + str(data) + "\n"
 				data = [int(float(x)) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
-				output[data.pop(0)] = 1
-				self.target.append(output)
+				classif = data.pop(0)
+				output[classif] = 1
+				self.class_dict.setdefault(classif, []).append(data)
+				self.targets.append(output)
 				self.inputs.append(data)
 		
 
-
+	'''
+	returns a 'balanced' list of inputs/targets. IE 1 non-playoff, 1 wc, 1 div, 1 conf, 1 super, 1 champ
+	'''
+	def getBalancedTargets(self):
+		i = []
+		t = []
+		for classif,data in self.class_dict.items():
+			num = random.randint(0,len(data)-1)
+			i.append(data[num])
+			_o = [0,0,0,0,0,0]
+			_o[classif] = 1
+			t.append(_o)
+		return i,t
+				
+	
 	
 
 	@staticmethod
