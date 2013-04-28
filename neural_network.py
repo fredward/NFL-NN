@@ -17,19 +17,6 @@ class Neural_Network:
 		self.hidden_nodes = []
 		self.output_nodes = []
 		
-	'''
-	static constructor for a neural network with random weigts from -0.1 to 0.1
-	'''
-	@staticmethod
-	def createWithRandomWeights(i_count, h_count, o_count):
-		nn = Neural_Network()
-		for i in range(h_count):
-			nn.hidden_nodes.append( Node.initWithRandomWeights(i_count) )
-		for i in range(o_count):
-			nn.output_nodes.append( Node.initWithRandomWeights(h_count) )
-		return nn
-		
-		
 		
 	'''
 	feed the input values forward, and return the result
@@ -99,9 +86,8 @@ class Neural_Network:
 				print "epoch: %i" % (e+1)
 				for i,t in zip(inputs, targets):
 					#print "%f, %s" % (learning_rate(t), t)
-					for c in range(learning_rate[t.index(1)]):
 						
-						self = self.back_prop(i,t, .05)
+					self = self.back_prop(i,t, .05)
 					
 			return self
 
@@ -121,9 +107,22 @@ class Neural_Network:
 		file = open (filename, 'r')
 		nn = pickle.load (file)
 		return nn	
+	
+	'''
+	static constructor for a neural network with random weigts from -0.1 to 0.1
+	'''
+	@staticmethod
+	def createWithRandomWeights(i_count, h_count, o_count):
+		nn = Neural_Network()
+		for i in range(h_count):
+			nn.hidden_nodes.append( Node.initWithRandomWeights(i_count) )
+		for i in range(o_count):
+			nn.output_nodes.append( Node.initWithRandomWeights(h_count) )
+		return nn
 				
 '''
 TESTING
+'''
 '''
 # summed, squared error
 def error(o, t):
@@ -181,12 +180,14 @@ for e in range(1):
 
 nn = Neural_Network.createFromFile("savedWeights.txt")
 DL = Data_Loader.createFromYear(1999)
+
+nn = Neural_Network.createWithRandomWeights(66,50,6)
+DL = Data_Loader.createFromYear(2011)
 for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
 	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
 	print "Error: %f" % (error(res,DL.target[i]))
-'''
-'''
+
 lr = 1.5
 # test 200 times over all the teams from 1971 and 1972
 for e in range(30):
@@ -203,20 +204,21 @@ for e in range(30):
 	lr = lr * .9
 	Neural_Network.saveToFile(nn, "savedWeights.txt")
 '''
-if __name__ == "main":
-	nn = Neural_Network.createWithRandomWeights(66,150,6)		
+if __name__ == "__main__":
+	nn = Neural_Network.createWithRandomWeights(66,40,6)		
 	
 	
 	# train! with learning rate proportional to # of teams in the situations
 	inputs = []
 	targets = []
 	for y in range(1971,1973):
-		DL = Data_Loader.createFromYear(y)
-		inputs += DL.inputs
-		targets += DL.target 
+		DL = Data_Loader()
+		i,t = DL.getTargets(y)
+		inputs += i
+		targets += t 
 		#print targets
-	nn = nn.train(20,inputs,targets,1.5)
-	'''
+	nn = nn.train(10,inputs,targets,1.5)
+
 	lr = 1.5
 	# test 200 times over all the teams from 1971 and 1972
 	for e in range(1500):
@@ -230,22 +232,23 @@ if __name__ == "main":
 		
 				nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
 		lr = lr * .9
-	
-	'''
+
 	# summed, squared error
-	def error(o, t):
-		return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
+	def error(o, t1):
+		z = zip(o,t1)
+		return float(reduce(lambda a,b: a + (float(b[0]) - float(b[1]))**2, z, 0.0))
 
 
 	
-	# test over first 20 teams in 1972, and print the output, target, and error
-	DL = Data_Loader.createFromYear(1972)
-	for i in range(len(DL.inputs)):
-		res = nn.feed_forward(DL.inputs[i])
-		print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
-		print "Error: %f" % (error(res,DL.target[i]))
-	
-	'''
+	# test over all teams from 1972, and print the output, target, and error
+	i,t = DL.getTargets(1972)
+	t = t.__iter__()
+	for input in i:
+		res = nn.feed_forward(input)
+		target = t.next()
+		print "\nTeam %i\nResult: %s\nTarget: %s" % (0,str(res),str(target))
+		print "Error: %f" % (error(res,target))
+
 	nn = Neural_Network.createWithRandomWeights(4,20,2)		
 	#learning and, xor
 	for i in range(1000):
@@ -272,8 +275,7 @@ if __name__ == "main":
 	print "End \tout: " + str(res)+ "\n"
 	res = nn.feed_forward([1,0,0,0])
 	print "End \tout: " + str(res)+ "\n"
-	'''
-	'''
+
 	nn = Neural_Network.createWithRandomWeights(3,15,1)		
 	#attempting to learn 'true' for an input with one zero.
 	for i in range(2000):
