@@ -1,6 +1,6 @@
 import csv
 import random
-
+import itertools
 '''
 TODO:
 	Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -50,12 +50,18 @@ class Data_Loader:
 		o[classification] = 1
 		return o 
 
+
 	'''
-	returns a 'balanced' list of inputs/targets. IE 1 non-playoff, 1 wc, 1 div, 1 conf, 1 super, 1 champ
-	'''
-	def getBalancedTargets(self):
-		return None
-				
+	returns an ordered tuple of inputs, targets for the given year
+	'''				
+	def getTargets(self,year):
+		inputs = []
+		targets = []
+		for k,v in self.year_dict[year].items():
+			inputs += zip(*v)[1]
+			targets += itertools.repeat(self.encode(k),len(v))
+		return inputs,targets
+			
 	
 	
 
@@ -74,3 +80,4 @@ class Data_Loader:
 		return DL
 		
 dl = Data_Loader()
+print dl.getTargets(2000)
