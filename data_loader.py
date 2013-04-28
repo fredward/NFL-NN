@@ -61,8 +61,15 @@ class Data_Loader:
 			inputs += zip(*v)[1]
 			targets += itertools.repeat(self.encode(k),len(v))
 		return inputs,targets
-			
 	
+	'''
+	Get all (data, stats) tuples for the given year
+	'''	
+	def getAllTeams(self,year):
+		teams = []
+		for v in self.year_dict[year].values():
+			teams += v
+		return teams
 	
 
 	@staticmethod
@@ -78,6 +85,12 @@ class Data_Loader:
 		DL = Data_Loader(year)
 				
 		return DL
-		
-dl = Data_Loader()
-print dl.getTargets(2000)
+
+
+'''
+Testing
+'''		
+if __name__ == "__main__":	
+	dl = Data_Loader()
+	print dl.getTargets(2000)
+	print dl.getAllTeams(1992)
