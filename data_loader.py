@@ -12,7 +12,7 @@ class Data_Loader:
 			self.year = year
 		# load the list of input vectors for a given year
 		# year is in the 2nd column of the csv file'''	
-		datafile = open('scaledData.csv', 'rU')
+		datafile = open('balancedData.csv', 'rU')
 		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
 		for row in datafile:
 			data = row.strip().split(',')

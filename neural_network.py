@@ -129,12 +129,63 @@ TESTING
 def error(o, t):
 	return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
 
+nn = Neural_Network.createWithRandomWeights(4,20,2)		
+#learning and, xor
+for i in range(1000):
+	nn=nn.back_prop([1,1,1,1], [1,0], 2)
+	nn=nn.back_prop([1,1,0,1], [1,1], 2)
+	nn=nn.back_prop([1,0,1,1], [0,0], 2)
+	nn=nn.back_prop([0,1,1,1], [0,0], 2)
+	#nn=nn.back_prop([1,1,1,0], [1,1], 2)
+	nn=nn.back_prop([1,1,0,0], [1,0], 2)
+	nn=nn.back_prop([1,0,1,0], [0,1], 2)
+	nn=nn.back_prop([0,1,1,0], [0,1], 2)
+	nn=nn.back_prop([1,0,0,1], [0,1], 2)
+	nn=nn.back_prop([0,0,1,1], [0,0], 2)
+	nn=nn.back_prop([0,1,0,1], [0,1], 2)
+	nn=nn.back_prop([0,0,0,1], [0,1], 2)
+	nn=nn.back_prop([1,0,0,0], [0,0], 2)
+	nn=nn.back_prop([0,0,1,0], [0,1], 2)
+	#nn=nn.back_prop([0,1,0,0], [0,0], 2)
+	nn=nn.back_prop([0,0,0,0], [0,0], 2)
+	
+res = nn.feed_forward([1,1,1,0])
+print "End \tout: " + str(res) 	
+res = nn.feed_forward([0,1,0,0])
+print "End \tout: " + str(res)+ "\n"
+res = nn.feed_forward([1,0,0,0])
+print "End \tout: " + str(res)+ "\n"
+
+
+'''
+nn = Neural_Network.createWithRandomWeights(66,50,6)
+Neural_Network.saveToFile(nn, "savedWeights.txt")
+'''
+'''
+for e in range(1):
+	nn = Neural_Network.createFromFile("savedWeights.txt")
+	for y in range(1970,2011):
+		# skip the year of the lockout
+		if (y == 1982):
+			continue
+			pass
+		print "epoch %i, year %i" % (e,y)
+		DL = Data_Loader.createFromYear(y)
+		for i in range(len(DL.inputs)):
+			#print "Inputs: " + str(DL.inputs[0]) + "\n"
+			#print "Target: " + str(DL.target[0]) + "\n"
+	
+	
+			nn=nn.back_prop(DL.inputs[i], DL.target[i], 1)
+	Neural_Network.saveToFile(nn, "savedWeights.txt")
+
 nn = Neural_Network.createFromFile("savedWeights.txt")
-DL = Data_Loader.createFromYear(2011)
+DL = Data_Loader.createFromYear(1999)
 for i in range(len(DL.inputs)):
 	res = nn.feed_forward(DL.inputs[i])
 	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
 	print "Error: %f" % (error(res,DL.target[i]))
+'''
 '''
 lr = 1.5
 # test 200 times over all the teams from 1971 and 1972
