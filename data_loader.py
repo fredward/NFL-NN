@@ -2,7 +2,7 @@ import csv
 import random
 import itertools
 from team import Team
-from random import choice
+from random import choice, random
 '''
 TODO:
 	Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -85,6 +85,29 @@ class Data_Loader:
 		return inputs,targets
 
 	'''
+	Will perform SMOTE oversampling to fix data imbalance problem in our data
+	'''
+	def getSmoteTargets(self, years):
+		all_years = []
+		oversampled = []
+		for y in years:
+			map(lambda c,l: (all_years[c].append(l), self.encode(c)), zip(self.year_dict[y].keys(), self.year_dict[y].values))
+		largest_classification = reduce(lambda l =  max(largest_classification, len(l)), all_years, 0)
+		for c in all_years
+			oversample_amount = largest_classification/len(c)
+			if oversample_amount > 1:
+				for (i,t) in c:
+					number_of_neighbors = round(oversample_amount-1)
+					neighbors = self.getClosestNeighbors(i, c, number_of_neighbors)
+					new_data = map(lambda n: ((vectorBetweenVectors(i,n,random()),t), neighbors)
+					oversampled+=new_data
+		inputs, targets = zip(*oversampled)
+		return inputs, targets
+					
+				
+					
+
+	'''
 	Get all (data, stats) tuples for the given year
 	'''	
 	def getAllTeams(self,year):
@@ -92,26 +115,65 @@ class Data_Loader:
 		for v in self.year_dict[year].values():
 			teams += v
 		return teams
+		
 
 	'''
 	Get the given team by team code and year
-		parameters:
-			team: the team code as a string
-			year: the year as an int
-		return value:
-			the team as team object
+	parameters:
+		team: the team code as a string
+		year: the year as an int
+	return:
+		the team as team object
 	'''
 	def getTeam(self, team, year):
 		return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
 
 	'''
-	Will perform SMOTE oversampling to fix data imbalance problem in our data
+	Gets the closest neighbors by euclidean distance
+	Parameters
+		t: 			a Team object
+		neighbors: 	a list of Teams from which to select the closest neighbor
+		num:		number of neighbors to select
+	Return:
+		a list of the num closest neighbors as Team objects
 	'''
-	def getSmoteTargets(team_dict):
-		return None
-
-
+	def getClosestNeighbors(t, neighbors, num):
+		distances_to_team = map(lambda l: (l, self.compareVector(t.result, l.result)), neighbors)
+        sorted_distances = sorted(distances_to_team, key = lambda (t,d): d)
+        similar_teams = []
+        for i in range(num_teams):
+            similar_teams.append(sorted_distances.pop(0)[0])
+        return similar_teams
+    
+    '''
+    Returns a vector on the segment between two vectors
+    Parameters:
+    	v1,v2:	two vectors
+    	d:		distance between the two vectors where the new vector should be (0-1)
+    Return:
+    	the new vector
+	'''
+    def vectorBetweenVectors(v1, v2, d):
+    	new = []
+    	for i1,i2 in zip(v1,v2):
+    		new.append(i1+((i1-i2)*d))
+    	return new
+	
+	'''
+    compare two vectors by euclidean distance
+    Parameters:
+        v1,v2:  two lists of numbers representing a vector - assumes they are the same
+                length because the neural network produces an output list of uniform
+                length
+    Return:
+        euclidean distance between two vectors (float)
+    '''
+    def compareVector(self, v1, v2):
+        sum = 0
+        for i1,i2 in zip(v1,v2):
+            sum += pow((i1-i2),2)
+        return sqrt(sum)	
 
 '''
 Testing
