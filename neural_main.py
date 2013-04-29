@@ -70,7 +70,7 @@ parser_train.add_argument('db',type=str,help='data balancing method, u: unbalanc
 parser_train.add_argument('start',type=int,help='starting year to train on')
 parser_train.add_argument('end',type=int,help='ending year')
 parser_train.add_argument('epochs',type=int,help='number of epochs to train for')
-parser_train.add_argument("learn_rate",type=float,help='the NN learning rate')
+parser_train.add_argument('learn_rate',type=float,help='the NN learning rate')
 parser_train.add_argument('file',type=str,help='NN output file')
 parser_train.set_defaults(func=train)
 
