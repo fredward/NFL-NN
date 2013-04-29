@@ -14,7 +14,7 @@ class Data_Loader:
 		# load the list of input vectors for a given year
 
 		# year is in the 2nd column of the csv file'''	
-		datafile = open('scaledData.csv', 'rU')
+		datafile = open('playoffTeams.csv', 'rU')
 		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
 
 		#skip first line
