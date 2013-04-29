@@ -30,20 +30,26 @@ import argparse
 
 
 def train(args):
-	try:
-		print 'train'
+	#try:
 		nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
-		dl = Data_Loader()
 		inputs = []
 		targets = []
-		for y in range(args.start,args.end):
-			i,t = dl.getTargets(y)
+		for y in range(args.start,args.end+1):
+			if(args.db == 'u'):
+				dl = Data_Loader()
+				i,t = dl.getTargets(y)
+			elif(args.db == 'b'):
+				dl = Data_Loader()
+				i,t = dl.getBalancedTargets(y)
+			elif(args.db == 'o'):
+				dl = Data_Loader('balancedData.csv')
+				i,t = dl.getTargets(y)
 			inputs += i
 			targets += t
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
-	except Exception:
-		print "invalid formatting, consult neural_main.py t --help"
+	#except Exception as e:
+		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
 	try:	
@@ -60,6 +66,7 @@ parser = argparse.ArgumentParser(description='Predict NFL playoff results with O
 subparsers = parser.add_subparsers(help='Possible Actions')
 parser_train = subparsers.add_parser('t',help='train a NN over start-end years for e epochs')
 parser_train.add_argument('nodes',type=int,help='number of hidden nodes')
+parser_train.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, s: SMOTE (not implemented)',choices="uobs")
 parser_train.add_argument('start',type=int,help='starting year to train on')
 parser_train.add_argument('end',type=int,help='ending year')
 parser_train.add_argument('epochs',type=int,help='number of epochs to train for')
