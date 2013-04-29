@@ -94,9 +94,9 @@ class Neural_Network:
 	'''
 	Using Python's built in pickle module, we can save the neural network as an object in a file
 	'''
-	def saveToFile (nn, filename):
+	def saveToFile (self, filename):
 		file = open (filename, 'w')
-		pickle.dump(nn, file)
+		pickle.dump(self, file)
 		file.close()
 
 	'''
@@ -157,52 +157,51 @@ print "End \tout: " + str(res)+ "\n"
 
 
 '''
-nn = Neural_Network.createWithRandomWeights(66,50,6)
-Neural_Network.saveToFile(nn, "savedWeights.txt")
-'''
-'''
-for e in range(1):
-	nn = Neural_Network.createFromFile("savedWeights.txt")
-	for y in range(1970,2011):
-		# skip the year of the lockout
-		if (y == 1982):
-			continue
-			pass
-		print "epoch %i, year %i" % (e,y)
-		DL = Data_Loader.createFromYear(y)
-		for i in range(len(DL.inputs)):
-			#print "Inputs: " + str(DL.inputs[0]) + "\n"
-			#print "Target: " + str(DL.target[0]) + "\n"
-	
-	
-			nn=nn.back_prop(DL.inputs[i], DL.target[i], 1)
+if __name__ == "__main__":
+	nn = Neural_Network.createWithRandomWeights(66,50,6)
 	Neural_Network.saveToFile(nn, "savedWeights.txt")
+	for e in range(1):	
+		nn = Neural_Network.createFromFile("savedWeights.txt")
+		for y in range(1970,2011):
+			# skip the year of the lockout
+			if (y == 1982):
+				continue
+				pass
+			print "epoch %i, year %i" % (e,y)
+			DL = Data_Loader.createFromYear(y)
+			for i in range(len(DL.inputs)):
+				#print "Inputs: " + str(DL.inputs[0]) + "\n"
+				#print "Target: " + str(DL.target[0]) + "\n"
+		
+		
+				nn=nn.back_prop(DL.inputs[i], DL.target[i], 1)
+		Neural_Network.saveToFile(nn, "savedWeights.txt")
 
-nn = Neural_Network.createFromFile("savedWeights.txt")
-DL = Data_Loader.createFromYear(1999)
-
-nn = Neural_Network.createWithRandomWeights(66,50,6)
-DL = Data_Loader.createFromYear(2011)
-for i in range(len(DL.inputs)):
-	res = nn.feed_forward(DL.inputs[i])
-	print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
-	print "Error: %f" % (error(res,DL.target[i]))
-
-lr = 1.5
-# test 200 times over all the teams from 1971 and 1972
-for e in range(30):
 	nn = Neural_Network.createFromFile("savedWeights.txt")
-	for y in range(1970,2011):
-		print "epoch %i, year %i" % (e,y)
-		DL = Data_Loader.createFromYear(y)
-		for i in range(len(DL.inputs)):
-			#print "Inputs: " + str(DL.inputs[0]) + "\n"
-			#print "Target: " + str(DL.target[0]) + "\n"
-	
-	
-			nn=nn.back_prop(DL.inputs[i], DL.target[i], .5)
-	lr = lr * .9
-	Neural_Network.saveToFile(nn, "savedWeights.txt")
+	DL = Data_Loader.createFromYear(1999)
+
+	nn = Neural_Network.createWithRandomWeights(66,50,6)
+	DL = Data_Loader.createFromYear(2011)
+	for i in range(len(DL.inputs)):
+		res = nn.feed_forward(DL.inputs[i])
+		print "\nTeam %i\nResult: %s\nTarget: %s" % (i,str(res),str(DL.target[i]))
+		print "Error: %f" % (error(res,DL.target[i]))
+
+	lr = 1.5
+	# test 200 times over all the teams from 1971 and 1972
+	for e in range(30):
+		nn = Neural_Network.createFromFile("savedWeights.txt")
+		for y in range(1970,2011):
+			print "epoch %i, year %i" % (e,y)
+			DL = Data_Loader.createFromYear(y)
+			for i in range(len(DL.inputs)):
+				#print "Inputs: " + str(DL.inputs[0]) + "\n"
+				#print "Target: " + str(DL.target[0]) + "\n"
+		
+		
+				nn=nn.back_prop(DL.inputs[i], DL.target[i], .5)
+		lr = lr * .9
+		Neural_Network.saveToFile(nn, "savedWeights.txt")
 '''
 if __name__ == "__main__":
 	nn = Neural_Network.createWithRandomWeights(66,40,6)		
