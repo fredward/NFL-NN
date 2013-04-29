@@ -71,7 +71,9 @@ Testing
 '''   
 if __name__ == "__main__":
     from data_loader import Data_Loader 
+    
     DL = Data_Loader()
+    '''
     nn = Neural_Network.createWithRandomWeights(66,40,6)    
         
     # train! with learning rate proportional to # of teams in the situations
@@ -84,7 +86,8 @@ if __name__ == "__main__":
         #print targets
     nn = nn.train(10000,inputs,targets,1.5)
     nn.saveToFile("predictortest.txt")
-    #    nn = Neural_Network.createFromFile("predictortest.txt")
+    '''
+    nn = Neural_Network.createFromFile("predictortest.txt")
     teams_2011 = DL.getAllTeams(2011)
     pats_2011 = filter(lambda t: t.name == "nwe", teams_2011)[0]
     all_other_teams = filter(lambda t: t.name != "nwe", teams_2011)
