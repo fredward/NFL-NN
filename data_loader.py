@@ -8,7 +8,6 @@ TODO:
 '''
 
 class Data_Loader:
-
 	def __init__(self):
 		self.year_dict = {}
 		# load the list of input vectors for a given year

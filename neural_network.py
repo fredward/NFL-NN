@@ -42,7 +42,6 @@ class Neural_Network:
 		#pop through the error and use it to set the deltas for each output node
 		map( lambda n: (n.set_delta((target.pop(0) - output.pop(0)) * (n.calculated_value*(1-n.calculated_value)))), self.output_nodes)	 
 		
-
 		'''
 		the hidden nodes are a tad more complicated, as they require summation from the deltas of each downstream nodes, to get the
 		weighted error for each hidden node
