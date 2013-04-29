@@ -290,4 +290,4 @@ if __name__ == '__main__':
 			nn=nn.back_prop([0,1,0], [0], .5)
 			nn=nn.back_prop([0,0,0], [0], .5)
 		
-		'''
+		

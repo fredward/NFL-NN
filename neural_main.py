@@ -30,24 +30,29 @@ import argparse
 
 
 def train(args):
-	print 'train'
-	nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
-	dl = Data_Loader()
-	inputs = []
-	targets = []
-	for y in range(args.start,args.end):
-		i,t = dl.getTargets(y)
-		inputs += i
-		targets += t
-	nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
-	nn.saveToFile(args.file)
+	try:
+		print 'train'
+		nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
+		dl = Data_Loader()
+		inputs = []
+		targets = []
+		for y in range(args.start,args.end):
+			i,t = dl.getTargets(y)
+			inputs += i
+			targets += t
+		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
+		nn.saveToFile(args.file)
+	except Exception:
+		print "invalid formatting, consult neural_main.py t --help"
 
 def predict(args):
-	nn = Neural_Network.createFromFile(args.file)
-	dl = Data_Loader()
-	team = dl.getTeam(args.team, args.year)
-	print nn.feed_forward(team.stats)
-
+	try:	
+		nn = Neural_Network.createFromFile(args.file)
+		dl = Data_Loader()
+		team = dl.getTeam(args.team, args.year)
+		print "RESULTS: %s" % nn.feed_forward(team.stats)
+	except Exception:
+		print "invalid formatting, consult neural_main.py p --help"
 
 
 parser = argparse.ArgumentParser(description='Predict NFL playoff results with OR train a neural network on NFL results')
@@ -65,7 +70,7 @@ parser_train.set_defaults(func=train)
 parser_pred = subparsers.add_parser('p',help='predict the given team\'s based on the given NN')
 parser_pred.add_argument('team',type=str,help='team to predict')
 parser_pred.add_argument('year',type=int,help='year to predict')
-parser_pred.add_argument('file',type=str,help='NN to load')
+parser_pred.add_argument('file',type=str,help='NN file to load')
 parser_pred.set_defaults(func=predict)
 
 args = parser.parse_args()
