@@ -123,8 +123,9 @@ class Neural_Network:
 '''
 TESTING
 '''
+
 if __name__ == '__main__':
-	'''
+
 	# summed, squared error
 	def error(o, t):
 		return float(reduce(lambda a,b: a + (float(b) - float(t.pop(0)))**2, o, 0.0))
