@@ -2,6 +2,7 @@ import csv
 import random
 import itertools
 from team import Team
+from random import choice
 '''
 TODO:
 	Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -10,11 +11,14 @@ TODO:
 
 class Data_Loader:
 
-	def __init__(self):
+	def __init__(self,f=None):
 		self.year_dict = {}
 		# load the list of input vectors for a given year
-		# year is in the 2nd column of the csv file'''	
-		datafile = open('scaledData.csv', 'rU')
+		# year is in the 2nd column of the csv file'''
+		if f == None:	
+			datafile = open('scaledData.csv', 'rU')
+		else:
+			datafile = open(f, 'rU')
 		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
 
 		#skip first line
@@ -26,21 +30,24 @@ class Data_Loader:
 			
 			#print "SAME!\n"
 			(name,year) = (data.pop(0),int(data.pop(0)))
+	
 			#print (year,team)
 			if year in self.year_dict:
-				data = [int(float(x)) for x in data]
+				data = [float(x) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
-				classif = data.pop(0)
+				classif = int(data.pop(0))
 				output[classif] = 1
 				self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
+
 			else:
 				self.year_dict[year] = {}
-				data = [int(float(x)) for x in data]
+				data = [float(x) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
-				classif = data.pop(0)
+				classif = int(data.pop(0))
 				output[classif] = 1
 				self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
-		
+
+			
 			
 			
 	'''
@@ -65,6 +72,19 @@ class Data_Loader:
 		return inputs,targets
 	
 	'''
+	returns an 5 member ordered tuple of inputs, targets, with one from each class (randomly selected
+		for classifications with more than one member)
+	'''
+	def getBalancedTargets(self,year):
+		inputs = []
+		targets = []
+		for k,v in self.year_dict[year].items():
+			# notice we are appending here because these are just single lists, not lists of lists
+			inputs.append(choice(v).stats)
+			targets.append(self.encode(k))
+		return inputs,targets
+
+	'''
 	Get all (data, stats) tuples for the given year
 	'''	
 	def getAllTeams(self,year):
@@ -85,11 +105,18 @@ class Data_Loader:
 		return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
 
+	'''
+	Will perform SMOTE oversampling to fix data imbalance problem in our data
+	'''
+	def getSmoteTargets(team_dict):
+		return None
+
+
 
 '''
 Testing
 '''		
 if __name__ == "__main__":	
 	dl = Data_Loader()
-	print dl.getTargets(2000)
-	print dl.getAllTeams(1992)
+	print dl.getBalancedTargets(2000)
+	#print dl.getAllTeams(1992)
