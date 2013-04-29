@@ -11,20 +11,15 @@ class Data_Loader:
 	def __init__(self):
 		self.year_dict = {}
 		# load the list of input vectors for a given year
-		# year is in the 2nd column of the csv file'''	
-		datafile = open('balancedData.csv', 'rU')
-		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
+		# year is in the 2nd column of the csv file
+		datafile = open('playoffTeams.csv', 'rU')
 
 		#skip first line
 		datafile.readline()
 		for row in datafile:
 			data = row.strip().split(',')
-			#print "Row :" + str(data) + "\n"
-			#print "Year: " + str(year) + "\ndata[1] :" + str(data[1]) + "\n"
 			
-			#print "SAME!\n"
 			(team,year) = (data.pop(0),int(data.pop(0)))
-			#print (year,team)
 			if year in self.year_dict:
 				data = [int(float(x)) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
