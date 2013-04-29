@@ -1,6 +1,7 @@
 import csv
 import random
 import itertools
+from team import Team
 '''
 TODO:
 	Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -11,28 +12,32 @@ class Data_Loader:
 	def __init__(self):
 		self.year_dict = {}
 		# load the list of input vectors for a given year
-		# year is in the 2nd column of the csv file
-		datafile = open('playoffTeams.csv', 'rU')
+
+		# year is in the 2nd column of the csv file'''	
+		datafile = open('scaledData.csv', 'rU')
+		#datareader = csv.reader(datafile, dialect=csv.excel_tab)
 
 		#skip first line
 		datafile.readline()
 		for row in datafile:
 			data = row.strip().split(',')
-			
-			(team,year) = (data.pop(0),int(data.pop(0)))
+
+			#print "SAME!\n"
+			(name,year) = (data.pop(0),int(data.pop(0)))
+			#print (year,team)
 			if year in self.year_dict:
 				data = [int(float(x)) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
 				classif = data.pop(0)
 				output[classif] = 1
-				self.year_dict[year].setdefault(classif,[]).append(((year,team),data))
+				self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
 			else:
 				self.year_dict[year] = {}
 				data = [int(float(x)) for x in data]
 				output = [0, 0, 0, 0, 0, 0]
 				classif = data.pop(0)
 				output[classif] = 1
-				self.year_dict[year].setdefault(classif,[]).append(((year,team),data))
+				self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
 		
 			
 			
@@ -53,7 +58,7 @@ class Data_Loader:
 		inputs = []
 		targets = []
 		for k,v in self.year_dict[year].items():
-			inputs += zip(*v)[1]
+			inputs += reduce(lambda a, b : a + [b.stats],v, list())
 			targets += itertools.repeat(self.encode(k),len(v))
 		return inputs,targets
 	
@@ -65,7 +70,17 @@ class Data_Loader:
 		for v in self.year_dict[year].values():
 			teams += v
 		return teams
-	
+
+	'''
+	Get the given team by team code and year
+		parameters:
+			team: the team code as a string
+			year: the year as an int
+		return value:
+			the team as team object
+	'''
+	def getTeam(self, team, year):
+		return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
 
 

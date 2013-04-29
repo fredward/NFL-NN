@@ -11,7 +11,7 @@ class NFL_Predictor:
     '''
     create a predictor class
     Parameters:
-        network: 	a Neural_Network object
+        network:    a Neural_Network object
     '''
     def __init__(self, network):
         self.nn = network
@@ -19,8 +19,7 @@ class NFL_Predictor:
     '''
     returns expected playoff wins from trained neural network
     Parameters:
-        team_stats: list of a single team's stats ordered as required for the neural
-                    network
+        team_stats: A Team object
     Return:
         feed-forward result of team's stats from neural network (float list)
     '''
@@ -31,13 +30,10 @@ class NFL_Predictor:
     '''
     returns the team that produces the closest prediction to the given team
     Parameters:
-        all_stats:  list of tuples of teams' stats for the team to be compared against
-        			each tuple should be in standard format from the dataLoader
-        				((year, team_name), stats)
+        all:        A list of Team objects representing all the teams that 
+                    should be compared with
                     stats must be ordered as required for the neural network
-        team_stats: tuple of a single team's stats for the team to be compared against
-        			each tuple should be in standard format from the dataLoader
-        				((year, team_name), stats)
+        team:       A single Team object 
         num_teams:  number of similar teams to return
     Return:
         list of tuples containing num_teams of similar teams in the format
@@ -45,13 +41,9 @@ class NFL_Predictor:
     '''
     def compareWithPastTeams(self, all, team, num_teams):
         all_ff_results = []
-        all_stats = map(lambda ((y,n),l): l, all)
-        team_stats = team[1]
-        team_ff_results = self.runPrediction(team_stats)
-        for t in all:
-        	stat = t[1]
-        	all_ff_results.append((t,nn.feed_forward(stat)))
-        distances_to_team = map(lambda (t,r): (t, self.compareVector(team_ff_results, r)), all_ff_results)
+        team.result = self.runPrediction(team.stats)
+        map(lambda t: t.set_result(self.runPrediction(t.stats)), all)
+        distances_to_team = map(lambda t: (t, self.compareVector(team.result, t.result)), all)
         sorted_distances = sorted(distances_to_team, key = lambda (t,d): d)
         similar_teams = []
         for i in range(num_teams):
@@ -78,34 +70,36 @@ class NFL_Predictor:
 Testing
 '''   
 if __name__ == "__main__":
-	from data_loader import Data_Loader 
-	nn = Neural_Network.createWithRandomWeights(66,40,6)	
-		
-	# train! with learning rate proportional to # of teams in the situations
-	inputs = []
-	targets = []
-	for y in range(2005,2007):
-		DL = Data_Loader()
-		i,t = DL.getTargets(y)
-		inputs += i
-		targets += t 
-		#print targets
-	nn = nn.train(30,inputs,targets,1.5)
-	
-	DL = Data_Loader()
-	teams_2011 = DL.getAllTeams(2011)
-	pats_2011 = filter(lambda ((y,n),l): n == "nwe", teams_2011)[0]
-	pats_data = pats_2011[1]
-	all_other_teams = filter(lambda ((y,n),l): n != "nwe", teams_2011)
-	all_other_teams_data = map(lambda ((y,n),l): l, all_other_teams)
-	predictor = NFL_Predictor(nn)
-	similar = predictor.compareWithPastTeams(all_other_teams, pats_2011, 3)
-	print str(similar)
-	
-	
-	 
-	
-	
+    from data_loader import Data_Loader 
+    
+    DL = Data_Loader()
+    '''
+    nn = Neural_Network.createWithRandomWeights(66,40,6)    
+        
+    # train! with learning rate proportional to # of teams in the situations
+    inputs = []
+    targets = []
+    for y in range(2005,2007):
+        i,t = DL.getTargets(y)
+        inputs += i
+        targets += t 
+        #print targets
+    nn = nn.train(10000,inputs,targets,1.5)
+    nn.saveToFile("predictortest.txt")
+    '''
+    nn = Neural_Network.createFromFile("predictortest.txt")
+    teams_2011 = DL.getAllTeams(2011)
+    pats_2011 = filter(lambda t: t.name == "nwe", teams_2011)[0]
+    all_other_teams = filter(lambda t: t.name != "nwe", teams_2011)
+    predictor = NFL_Predictor(nn)
+    similar = predictor.compareWithPastTeams(all_other_teams, pats_2011, 3)
+    for t,d in similar:
+        print t.name + " " + str(d) + "\n"
+    
+    
+     
+    
+    
         
         
     
