@@ -72,7 +72,17 @@ class Data_Loader:
 		for v in self.year_dict[year].values():
 			teams += v
 		return teams
-	
+
+	'''
+	Get the given team by team code and year
+		parameters:
+			team: the team code as a string
+			year: the year as an int
+		return value:
+			the team as team object
+	'''
+	def getTeam(self, team, year):
+		return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
 
 
