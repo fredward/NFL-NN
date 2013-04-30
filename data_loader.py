@@ -111,7 +111,7 @@ class Data_Loader:
                     t = c[i]
                     number_of_neighbors = int(round(oversample_amount-1))
                     neighbors = self.getClosestNeighbors(t, c, number_of_neighbors)
-                    new_data = map(lambda n: (self.vectorBetweenVectors(t.stats,n.stats,random()), self.encode(t.classification)), neighbors)
+                    new_data = map(lambda n: (self.vectorBetweenVectors(t.stats,n.stats), self.encode(t.classification)), neighbors)
                     oversampled+=new_data
         	else:
         		oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
@@ -154,29 +154,28 @@ class Data_Loader:
     '''
     def getClosestNeighbors(self, t, neighbors, num):
         # we need at least as many teams as there are closest neighbors required
-        if len(neighbors) < num:
-            for i in range(num-len(neighbors)):
-                neighbors.append(neighbors[0])
-        distances_to_team = map(lambda m: (t, self.compareVector(t.stats, m.stats)), neighbors)
-        sorted_distances = sorted(distances_to_team, key = lambda (t,d): d)
+        #distances_to_team = map(lambda m: (t, self.compareVector(t.stats, m.stats)), neighbors)
+        sorted_distances = sorted(neighbors, key = lambda m: self.compareVector(t.stats, m.stats))
         similar_teams = []
+        #fill up the list at the end with duplicates if we dont have enough
+        while len(sorted_distances) < num:
+            sorted_distances.append(choice(neighbors))
         for i in range(num):
-            similar_teams.append(sorted_distances.pop(0)[0])
+            similar_teams.append(sorted_distances.pop(0))
         #print "simteam l " +str(len(similar_teams))
         return similar_teams
     
     '''
-    Returns a vector on the segment between two vectors
+    Returns a random vector on the segment between two vectors
     Parameters:
         v1,v2:  two vectors
-        d:      distance between the two vectors where the new vector should be (0-1)
     Return:
         the new vector
     '''
-    def vectorBetweenVectors(self, v1, v2, d):
+    def vectorBetweenVectors(self, v1, v2):
         new = []
         for i1,i2 in zip(v1,v2):
-            new.append(i1+((i1-i2)*d))
+            new.append(i1+((i1-i2)*(random())))
         return new
     
     '''
@@ -202,4 +201,4 @@ if __name__ == "__main__":
     #print dl.getBalancedTargets(2000)
     #print dl.getAllTeams(1992)
     
-    print dl.getSmoteTargets([2000])
+    print dl.getSmoteTargets([2000, 2001, 2002, 2003, 2004])
