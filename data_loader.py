@@ -3,6 +3,7 @@ import random
 import itertools
 from team import Team
 from random import choice, random
+from math import pow, sqrt
 '''
 TODO:
     Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -86,22 +87,34 @@ class Data_Loader:
 
     '''
     Will perform SMOTE oversampling to fix data imbalance problem in our data
+    Parameters:
+        years:  a list of years that we should do SMOTE processing on
+    Return:
+        a tuple of ordered lists representing the input stats and target results for ever
+        team and SMOTE-produced synthetic team in the years provided
     '''
     def getSmoteTargets(self, years):
-        all_years = []
+        all_years = [[] for x in range(6)]
         oversampled = []
         #for all the year range, make a list of lists by classifications - lists are tuple (input, target)
         for y in years:
-            map(lambda c,l: (all_years[c].append(l, self.encode(c))), zip(self.year_dict[y].keys(), self.year_dict[y].values))
-        largest_classification = reduce(lambda l:  max(largest_classification, len(l)), all_years, 0)
+            for (c,ts) in self.year_dict[y].items():
+                map(lambda t: all_years[c].append(t), ts)
+           # map(lambda (c,l): all_years[c].append((l, self.encode(c))), zip(self.year_dict[y].keys(), self.year_dict[y].values()))
+            #print str(all_years)
+        largest_classification = reduce(lambda m,l:  max(m, len(l)), all_years, 0)
         for c in all_years:
             oversample_amount = largest_classification/len(c)
+            print len(c)
             if oversample_amount > 1:
-                for (i,t) in c:
-                    number_of_neighbors = round(oversample_amount-1)
-                    neighbors = self.getClosestNeighbors(i, c, number_of_neighbors)
-                    new_data = map(lambda n: (vectorBetweenVectors(i,n,random()),t), neighbors)
+                for i in range(len(c)):
+                    t = c[i]
+                    number_of_neighbors = int(round(oversample_amount-1))
+                    neighbors = self.getClosestNeighbors(t, c, number_of_neighbors)
+                    new_data = map(lambda n: (self.vectorBetweenVectors(t.stats,n.stats,random()), self.encode(t.classification)), neighbors)
                     oversampled+=new_data
+        	else:
+        		oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
         inputs, targets = zip(*oversampled)
         return inputs, targets
                     
@@ -139,12 +152,17 @@ class Data_Loader:
     Return:
         a list of the num closest neighbors as Team objects
     '''
-    def getClosestNeighbors(t, neighbors, num):
-        distances_to_team = map(lambda l: (l, self.compareVector(t.result, l.result)), neighbors)
+    def getClosestNeighbors(self, t, neighbors, num):
+        # we need at least as many teams as there are closest neighbors required
+        if len(neighbors) < num:
+            for i in range(num-len(neighbors)):
+                neighbors.append(neighbors[0])
+        distances_to_team = map(lambda m: (t, self.compareVector(t.stats, m.stats)), neighbors)
         sorted_distances = sorted(distances_to_team, key = lambda (t,d): d)
         similar_teams = []
-        for i in range(num_teams):
+        for i in range(num):
             similar_teams.append(sorted_distances.pop(0)[0])
+        #print "simteam l " +str(len(similar_teams))
         return similar_teams
     
     '''
@@ -155,7 +173,7 @@ class Data_Loader:
     Return:
         the new vector
     '''
-    def vectorBetweenVectors(v1, v2, d):
+    def vectorBetweenVectors(self, v1, v2, d):
         new = []
         for i1,i2 in zip(v1,v2):
             new.append(i1+((i1-i2)*d))
@@ -181,5 +199,7 @@ Testing
 '''     
 if __name__ == "__main__":  
     dl = Data_Loader()
-    print dl.getBalancedTargets(2000)
+    #print dl.getBalancedTargets(2000)
     #print dl.getAllTeams(1992)
+    
+    print dl.getSmoteTargets([2000])
