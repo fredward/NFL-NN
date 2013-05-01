@@ -107,7 +107,6 @@ class Data_Loader:
         largest_classification = reduce(lambda m,l:  max(m, len(l)), all_years, 0)
         for c in all_years:
             oversample_amount = largest_classification/len(c)
-            print len(c)
             if oversample_amount > 1:
                 for i in range(len(c)):
                     t = c[i]

@@ -12,7 +12,7 @@ teams = {
 	'det' : 'Detroit Lions',
 	'gnb' : 'Green Bay Packers',
 	'htx' : 'Houston Texans',
-	'blt' : 'Indianapolis Colts',
+	'clt' : 'Indianapolis Colts',
 	'jax' : 'Jacksonville Janguars',
 	'kan' : 'Kansas City Chiefs',
 	'mia' : 'Miami Dolphins',

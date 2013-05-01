@@ -12,7 +12,7 @@ import argparse
 
 
 def train(args):
-	#try:
+	try:
 		nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
 		inputs = []
 		targets = []
@@ -28,27 +28,33 @@ def train(args):
 			i,t = dl.getTargets(y)
 		elif(args.db == 's'):
 			dl = Data_Loader()
+			print 'Creating SMOTE targets...'
 			i,t = dl.getSmoteTargets(y)
+		print len(t)
 		inputs += i
 		targets += t
 		#train NN with the given data
+		print 'Beginning Training...'
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
-	#except Exception as e:
+		print "Neural Network saved to %s" % (args.file)
+	except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
 	try:	
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
-		team = dl.getTeam(args.team, args.year)
-		print "RESULTS: %s" % nn.feed_forward(team.stats)
+		#team = dl.getTeam(args.team, args.year)
+		teams = dl.getAllTeams(args.year)
+		for team in teams:
+			print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
 		post_processor = NFL_Predictor(nn)
 		similar_teams = post_processor.compareWithPastTeams(dl.getEveryTeam(), team, 15)
 		for t in similar_teams:
 			print "%s \tScore: %f" % t
-	except Exception:
-		print "invalid formatting, consult neural_main.py p --help"
+	except Exception as e:
+		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 
 parser = argparse.ArgumentParser(description='Predict NFL playoff results with OR train a neural network on NFL results')
