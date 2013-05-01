@@ -30,7 +30,7 @@ def train(args):
 			dl = Data_Loader()
 			print 'Creating SMOTE targets...'
 			i,t = dl.getSmoteTargets(y)
-		print len(t)
+		print t
 		inputs += i
 		targets += t
 		#train NN with the given data
