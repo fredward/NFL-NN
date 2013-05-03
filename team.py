@@ -11,6 +11,9 @@ class Team:
 		self.stats = s
 		self.classification = c
 		self.result = []
-		
+	
+	'''
+	accessor method for results, useful because lambdas cannot contain assignments
+	'''	
 	def set_result(self, r):
 		self.result = r
