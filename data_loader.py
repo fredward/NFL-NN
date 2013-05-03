@@ -200,7 +200,10 @@ class Data_Loader:
     def vectorBetweenVectors(self, v1, v2):
         new = []
         for i1,i2 in zip(v1,v2):
-            new.append(i1+((i1-i2)*(random())))
+            new.append(i1+((i2-i1)*(random())))
+        #print "old1: " +str(v1)
+        #print "old2: " +str(v2)
+        #print "new:  " + str(new)
         return new
     
     '''
@@ -232,4 +235,7 @@ if __name__ == "__main__":
         smote_test_dict.setdefault(dl.rev_encode(t),[]).append(i)
     for k,v in smote_test_dict.items():
         print str(dl.encode(k)) + ": " + str(len(v))
+    rk,rv = choice(smote_test_dict.items())
+    #for t in rv:
+    #	print str(dl.encode(rk))	 + " -> " + str(t)
 
