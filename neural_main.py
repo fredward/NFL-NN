@@ -14,6 +14,7 @@ import argparse
 
 
 def train(args):
+
 	try:
 		# if file already exists, build on that training
 		if (os.path.exists(args.file)):
@@ -43,7 +44,7 @@ def train(args):
 			dl = Data_Loader()
 			print 'Creating SMOTE targets...'
 			i,t = dl.getSmoteTargets(y)
-		print t
+		
 		inputs += i
 		targets += t
 		#train NN with the given data
@@ -51,7 +52,7 @@ def train(args):
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
 		print "Neural Network saved to %s" % (args.file)
-	except Exception as e:
+	#except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
@@ -59,9 +60,8 @@ def predict(args):
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
 		#team = dl.getTeam(args.team, args.year)
-		teams = dl.getAllTeams(args.year)
-		for team in teams:
-			print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
+		teams = dl.getTeams(args.team, args.year)
+		print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
 		post_processor = NFL_Predictor(nn)
 		similar_teams = post_processor.compareWithPastTeams(dl.getEveryTeam(), team, 15)
 		for t in similar_teams:
