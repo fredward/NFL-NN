@@ -107,18 +107,22 @@ class Data_Loader:
         team and SMOTE-produced synthetic team in the years provided
     '''
     def getSmoteTargets(self, years):
-        all_years = {}
+        pre_all_years = {}
         oversampled = []
         #for all the year range, make a list of lists by classifications - lists are tuple (input, target)
         for y in years:
             for (c,ts) in self.year_dict[y].items():
-                map(lambda t: all_years.setdefault(c,[]).append(t), ts)
+                map(lambda t: pre_all_years.setdefault(c,[]).append(t), ts)
            # map(lambda (c,l): all_years[c].append((l, self.encode(c))), zip(self.year_dict[y].keys(), self.year_dict[y].values()))
             #print str(all_years)
+        all_years = {}
+        for i in range(10):
+        	for k in pre_all_years.keys():
+        		all_years.setdefault(k, []).append(choice(pre_all_years[k]))
         largest_classification = reduce(lambda m,l:  max(m, len(l)), all_years.values(), 0)
         #print "years: "+ all_years
         for l,c in all_years.items():
-            oversample_amount = largest_classification/float(len(c))
+            oversample_amount = 3 #largest_classification/float(len(c))
             #print "amount: " + str(oversample_amount)
             #print len(c)
             if oversample_amount > 1:
@@ -228,7 +232,7 @@ if __name__ == "__main__":
     dl = Data_Loader()
     #print dl.getBalancedTargets(2000)
     #print dl.getAllTeams(1992)
-    all_i, all_t =  dl.getSmoteTargets([2000, 2001, 2002, 2003, 2004,2005,2006])
+    all_i, all_t =  dl.getSmoteTargets([2008, 2009,2010,2011])
     smote = zip(all_i, all_t)
     smote_test_dict = {}
     for i,t in smote:
@@ -236,6 +240,6 @@ if __name__ == "__main__":
     for k,v in smote_test_dict.items():
         print str(dl.encode(k)) + ": " + str(len(v))
     rk,rv = choice(smote_test_dict.items())
-    #for t in rv:
-    #	print str(dl.encode(rk))	 + " -> " + str(t)
+    for t in rv:
+    	print str(dl.encode(rk))	 + " -> " + str(t)
 
