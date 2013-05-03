@@ -1,31 +1,16 @@
 from neural_network import Neural_Network
 from data_loader import Data_Loader
+<<<<<<< HEAD
 from itertools import izip, count 
+=======
+from nfl_predictor import NFL_Predictor
+>>>>>>> b75adfdccf9a9209c1818d3bb2e39851a8e22cf1
 '''
 A main file, for directing user input from the highest level. Will load and use
 all our other classes
 '''
 
-'''
-PLAN:
 
-Do we want to Train or Predict
-
-If Train:
-	Pick/Choose the training / testing test -> go train on X interations
-	
-If Predict:
-	1) Choose the NN file (weights) you want to load, and present a way to input team data
-		a) scrape from website OR just copy/paste into terminal
-	2) Run through the NN
-	3) Present output
-		a) predicted playoff finish
-		b) which teams is this team 'most like'
-		c) hopefully some graphics and stuff
-		
-This can all be done just in a straight forward imperative script
-
-'''
 
 import argparse
 
@@ -35,24 +20,32 @@ def train(args):
 		nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
 		inputs = []
 		targets = []
-		for y in range(args.start,args.end+1):
-			if(args.db == 'u'):
-				dl = Data_Loader()
-				i,t = dl.getTargets(y)
-			elif(args.db == 'b'):
-				dl = Data_Loader()
-				i,t = dl.getBalancedTargets(y)
-			elif(args.db == 'p'):
-				dl = Data_Loader('playoffTeams.csv')
-				i,t = dl.getBalancedTargets(y)
-			elif(args.db == 'o'):
-				dl = Data_Loader('balancedData.csv')
-				i,t = dl.getTargets(y)
-			inputs += i
-			targets += t
+
+		y = range(args.start,args.end+1)
+		if(args.db == 'u'):
+			dl = Data_Loader()
+			i,t = dl.getTargets(y)
+		elif(args.db == 'b'):
+			dl = Data_Loader()
+			i,t = dl.getBalancedTargets(y)
+		elif(args.db == 'p'):
+			dl = Data_Loader('playoffTeams.csv')
+			i,t = dl.getBalancedTargets(y)
+		elif(args.db == 'o'):
+			dl = Data_Loader('balancedData.csv')
+			i,t = dl.getTargets(y)
+		elif(args.db == 's'):
+			dl = Data_Loader()
+			print 'Creating SMOTE targets...'
+			i,t = dl.getSmoteTargets(y)
+		print t
+		inputs += i
+		targets += t
 		#train NN with the given data
+		print 'Beginning Training...'
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
+		print "Neural Network saved to %s" % (args.file)
 	except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
@@ -60,10 +53,16 @@ def predict(args):
 	try:	
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
-		team = dl.getTeam(args.team, args.year)
-		print "RESULTS: %s" % nn.feed_forward(team.stats)
-	except Exception:
-		print "invalid formatting, consult neural_main.py p --help"
+		#team = dl.getTeam(args.team, args.year)
+		teams = dl.getAllTeams(args.year)
+		for team in teams:
+			print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
+		post_processor = NFL_Predictor(nn)
+		similar_teams = post_processor.compareWithPastTeams(dl.getEveryTeam(), team, 15)
+		for t in similar_teams:
+			print "%s \tScore: %f" % t
+	except Exception as e:
+		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def cross_validate(args):
 	try:	
