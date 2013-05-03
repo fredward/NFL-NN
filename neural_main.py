@@ -2,6 +2,7 @@ from neural_network import Neural_Network
 from data_loader import Data_Loader
 from itertools import izip, count 
 from nfl_predictor import NFL_Predictor
+import os
 '''
 A main file, for directing user input from the highest level. Will load and use
 all our other classes
@@ -13,8 +14,16 @@ import argparse
 
 
 def train(args):
-	#try:
-		nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
+
+	try:
+		# if file already exists, build on that training
+		if (os.path.exists(args.file)):
+			print "file exists"
+			nn = Neural_Network.createFromFile(args.file)
+			pass
+		else:
+			print "file does not exist"
+			nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
 		inputs = []
 		targets = []
 
@@ -82,10 +91,10 @@ def cross_validate(args):
 				t.result = nn.feed_forward(t.stats)
 				max_index = max(izip(t.result, count()))[1] 
 				if (max_index == t.classification):
-					print "%s (%d) Correct" % (t.name, y)
+					#print "%s (%d) Correct" % (t.name, y)
 					correct += 1
 				else:
-					print "%s (%d) incorrect" % (t.name, y)
+					#print "%s (%d) incorrect" % (t.name, y)
 					incorrect += 1
 				pass
 			print "%d \t %d" % (y, correct)
