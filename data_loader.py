@@ -132,7 +132,6 @@ class Data_Loader:
             else:
                 #print "over threshold for smote: " +str(self.encode(c[0].classification))
                 oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
-        return oversampled
         inputs, targets = zip(*oversampled)
         return inputs, targets
                     
