@@ -3,18 +3,13 @@ from data_loader import Data_Loader
 from itertools import izip, count 
 from nfl_predictor import NFL_Predictor
 import os
+import argparse
 '''
 A main file, for directing user input from the highest level. Will load and use
 all our other classes
 '''
 
-
-
-import argparse
-
-
 def train(args):
-
 	try:
 		# if file already exists, build on that training
 		if (os.path.exists(args.file)):
@@ -52,14 +47,13 @@ def train(args):
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
 		print "Neural Network saved to %s" % (args.file)
-	#except Exception as e:
+	except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
-	try:	
+	try:
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
-		#team = dl.getTeam(args.team, args.year)
 		teams = dl.getTeams(args.team, args.year)
 		print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
 		post_processor = NFL_Predictor(nn)
@@ -74,6 +68,7 @@ def cross_validate(args):
 		nn = Neural_Network.createFromFile(args.file)
 		totalCorrect = 0
 		for y in range(args.start,args.end+1):
+			classRight = [0, 0, 0, 0, 0, 0]
 			correct = incorrect = 0
 			if(args.db == 'u'):
 				dl = Data_Loader()
@@ -93,11 +88,12 @@ def cross_validate(args):
 				if (max_index == t.classification):
 					#print "%s (%d) Correct" % (t.name, y)
 					correct += 1
+					classRight[t.classification] += 1
 				else:
 					#print "%s (%d) incorrect" % (t.name, y)
 					incorrect += 1
 				pass
-			print "%d \t %d" % (y, correct)
+			print "%d \t %d \t %s" % (y, correct, str(classRight))
 			totalCorrect += correct
 		print "totalCorrect: %d" % totalCorrect
 	except Exception as e:
