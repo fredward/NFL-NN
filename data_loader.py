@@ -132,7 +132,6 @@ class Data_Loader:
             else:
                 #print "over threshold for smote: " +str(self.encode(c[0].classification))
                 oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
-        return oversampled
         inputs, targets = zip(*oversampled)
         return inputs, targets
                     
@@ -226,7 +225,8 @@ if __name__ == "__main__":
     dl = Data_Loader()
     #print dl.getBalancedTargets(2000)
     #print dl.getAllTeams(1992)
-    smote =  dl.getSmoteTargets([2000, 2001, 2002, 2003, 2004,2005,2006])
+    all_i, all_t =  dl.getSmoteTargets([2000, 2001, 2002, 2003, 2004,2005,2006])
+    smote = zip(all_i, all_t)
     smote_test_dict = {}
     for i,t in smote:
         smote_test_dict.setdefault(dl.rev_encode(t),[]).append(i)
