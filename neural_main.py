@@ -1,10 +1,7 @@
 from neural_network import Neural_Network
 from data_loader import Data_Loader
-<<<<<<< HEAD
 from itertools import izip, count 
-=======
 from nfl_predictor import NFL_Predictor
->>>>>>> b75adfdccf9a9209c1818d3bb2e39851a8e22cf1
 '''
 A main file, for directing user input from the highest level. Will load and use
 all our other classes
