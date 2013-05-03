@@ -4,6 +4,8 @@ import itertools
 from team import Team
 from random import choice, random
 from math import pow, sqrt
+
+
 '''
 TODO:
     Optimize? Perhaps load the csv file into a dictionary (key: year, value: list of team data)
@@ -73,25 +75,27 @@ class Data_Loader:
     '''
     returns an ordered tuple of inputs, targets for the given year
     '''             
-    def getTargets(self,year):
+    def getTargets(self,years):
         inputs = []
         targets = []
-        for k,v in self.year_dict[year].items():
-            inputs += reduce(lambda a, b : a + [b.stats],v, list())
-            targets += itertools.repeat(self.encode(k),len(v))
+        for year in years:
+	        for k,v in self.year_dict[year].items():
+	            inputs += reduce(lambda a, b : a + [b.stats],v, list())
+	            targets += itertools.repeat(self.encode(k),len(v))
         return inputs,targets
     
     '''
     returns an 5 member ordered tuple of inputs, targets, with one from each class (randomly selected
         for classifications with more than one member)
     '''
-    def getBalancedTargets(self,year):
+    def getBalancedTargets(self,years):
         inputs = []
         targets = []
-        for k,v in self.year_dict[year].items():
-            # notice we are appending here because these are just single lists, not lists of lists
-            inputs.append(choice(v).stats)
-            targets.append(self.encode(k))
+        for year in years:
+	        for k,v in self.year_dict[year].items():
+	            # notice we are appending here because these are just single lists, not lists of lists
+	            inputs.append(choice(v).stats)
+	            targets.append(self.encode(k))
         return inputs,targets
 
     '''
@@ -144,6 +148,14 @@ class Data_Loader:
             teams += v
         return teams
         
+    '''
+    Get all the times in the dictionary, for every year
+    '''
+    def getEveryTeam(self):
+    	teams = []
+    	for year in self.year_dict.values():
+    		teams += reduce(lambda a,b: a + b, year.values())
+    	return teams
 
     '''
     Get the given team by team code and year
@@ -214,10 +226,10 @@ if __name__ == "__main__":
     dl = Data_Loader()
     #print dl.getBalancedTargets(2000)
     #print dl.getAllTeams(1992)
-    
     smote =  dl.getSmoteTargets([2000, 2001, 2002, 2003, 2004,2005,2006])
     smote_test_dict = {}
     for i,t in smote:
         smote_test_dict.setdefault(dl.rev_encode(t),[]).append(i)
     for k,v in smote_test_dict.items():
         print str(dl.encode(k)) + ": " + str(len(v))
+

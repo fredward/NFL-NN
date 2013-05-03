@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from node import Node
 from itertools import cycle
 from data_loader import Data_Loader
@@ -42,7 +40,6 @@ class Neural_Network:
 		#pop through the error and use it to set the deltas for each output node
 		map( lambda n: (n.set_delta((target.pop(0) - output.pop(0)) * (n.calculated_value*(1-n.calculated_value)))), self.output_nodes)	 
 		
-
 		'''
 		the hidden nodes are a tad more complicated, as they require summation from the deltas of each downstream nodes, to get the
 		weighted error for each hidden node
@@ -87,16 +84,16 @@ class Neural_Network:
 				for i,t in zip(inputs, targets):
 					#print "%f, %s" % (learning_rate(t), t)
 						
-					self = self.back_prop(i,t, .05)
+					self = self.back_prop(i,t, learning_rate)
 					
 			return self
 
 	'''
 	Using Python's built in pickle module, we can save the neural network as an object in a file
 	'''
-	def saveToFile (self, filename):
+	def saveToFile (nn, filename):
 		file = open (filename, 'w')
-		pickle.dump(self, file)
+		pickle.dump(nn, file)
 		file.close()
 
 	'''
@@ -120,54 +117,4 @@ class Neural_Network:
 			nn.output_nodes.append( Node.initWithRandomWeights(h_count) )
 		return nn
 				
-'''
-TESTING
-'''
 
-if __name__ == '__main__':
-
-		nn = Neural_Network.createWithRandomWeights(66,40,6)		
-		
-		
-		# train! with learning rate proportional to # of teams in the situations
-		inputs = []
-		targets = []
-		for y in range(1971,1973):
-			DL = Data_Loader()
-			i,t = DL.getTargets(y)
-			inputs += i
-			targets += t 
-			#print targets
-		nn = nn.train(10,inputs,targets,1.5)
-
-		lr = 1.5
-		# test 200 times over all the teams from 1971 and 1972
-		for e in range(1500):
-			for y in range(1970,2013):
-				print "epoch %i, year %i" % (e,y)
-				DL = Data_Loader.createFromYear(y)
-				for i in range(len(DL.inputs)):
-					#print "Inputs: " + str(DL.inputs[0]) + "\n"
-					#print "Target: " + str(DL.target[0]) + "\n"
-			
-			
-					nn=nn.back_prop(DL.inputs[i], DL.target[i], lr)
-			lr = lr * .9
-
-		# summed, squared error
-		def error(o, t1):
-			z = zip(o,t1)
-			return float(reduce(lambda a,b: a + (float(b[0]) - float(b[1]))**2, z, 0.0))
-
-
-		
-		# test over all teams from 1972, and print the output, target, and error
-		i,t = DL.getTargets(1972)
-		t = t.__iter__()
-		for input in i:
-			res = nn.feed_forward(input)
-			target = t.next()
-			print "\nTeam %i\nResult: %s\nTarget: %s" % (0,str(res),str(target))
-			print "Error: %f" % (error(res,target))
-
-		

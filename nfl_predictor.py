@@ -24,7 +24,7 @@ class NFL_Predictor:
         feed-forward result of team's stats from neural network (float list)
     '''
     def runPrediction(self, team_stats):
-        return nn.feed_forward(team_stats)
+        return self.nn.feed_forward(team_stats)
         
         
     '''
