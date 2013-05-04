@@ -2,7 +2,7 @@ import random
 import itertools
 import smote
 from team import Team
-from random import choice, random
+from random import choice, random, sample
 from math import pow, sqrt
 
 
@@ -124,9 +124,12 @@ class Data_Loader:
                 all_years.setdefault(k,[]).extend(v)
                 all_teams += v
         for k,v in all_years.items():
-            i,t =  smote.performBorderLineSmote(all_teams,k,int(N*len(years) - len(v)))
+            #print len(v), (N*len(years)-len(v))
+            i,t =  smote.performBorderLineSmote(all_teams,k,(N*len(years)-len(v)))
             inputs += i
             targets += t
+
+        #teams = sample(zip(self.getTargets(years)[0],self.getTargets(years)[1]),Nreal)
         i,t = self.getTargets(years)
         inputs += i
         targets += t
@@ -165,8 +168,8 @@ class Data_Loader:
                 for i in range(len(c)):
                     t = c[i]
                     number_of_neighbors = int(round(oversample_amount))
-                    neighbors = self.getClosestNeighbors(t, c, number_of_neighbors)
-                    new_data = map(lambda n: (self.vectorBetweenVectors(t.stats,n.stats), self.encode(t.classification)), neighbors)
+                    neighbors = smote.getClosestNeighbors(t, c, number_of_neighbors)
+                    new_data = map(lambda n: (smote.vectorBetweenVectors(t.stats,n.stats), self.encode(t.classification)), neighbors)
                     oversampled+=new_data
             else:
                 #print "over threshold for smote: " +str(self.encode(c[0].classification))

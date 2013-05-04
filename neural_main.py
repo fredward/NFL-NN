@@ -30,7 +30,8 @@ def train(args):
 		elif(args.db == 's'):
 			dl = Data_Loader()
 			print 'Creating SMOTE targets...'
-			i,t = dl.getBLSmoteTargets(y,25)
+			i,t = dl.getBLSmoteTargets(y,35)
+			#i,t = dl.getSmoteTargets(y)
 		inputs += i
 		targets += t
 		#create NN
@@ -94,9 +95,9 @@ def cross_validate(args):
 			total_error = 0.0
 			for t in teams:
 				t.result = nn.feed_forward(t.stats)
-				error = (find_error(t.result, encode(t.classification)))**2
-				total_error += error
-				if error < .02:
+				error = (find_error(t.result, encode(t.classification)))
+				total_error += error**2
+				if error < .1:
 					correct += 1
 					classRight
 				print "team %s, results %s, class %s, error %s" % (t.name, t.result, encode(t.classification), error)
