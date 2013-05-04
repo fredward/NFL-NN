@@ -1,6 +1,6 @@
-import csv
 import random
 import itertools
+import smote
 from team import Team
 from random import choice, random
 from math import pow, sqrt
@@ -107,6 +107,31 @@ class Data_Loader:
 	            targets.append(self.encode(k))
         return inputs,targets
 
+    '''
+    Fills the data with BorderLine SMOTE targets until every classification has N members
+    Parameters:
+        N: the size to fill each class to
+    Return Value:
+        inputs, targets
+    '''
+    def getBLSmoteTargets(self,years,N):
+        inputs = []
+        targets = []
+        all_teams = []
+        all_years = {}
+        for year in years:
+            for k,v in self.year_dict[year].items():
+                all_years.setdefault(k,[]).extend(v)
+                all_teams += v
+        for k,v in all_years.items():
+            i,t =  smote.performBorderLineSmote(all_teams,k,int(N*len(years) - len(v)))
+            inputs += i
+            targets += t
+        i,t = self.getTargets(years)
+        inputs += i
+        targets += t
+        return inputs, targets
+        
 
     '''
     Will perform SMOTE oversampling to fix data imbalance problem in our data

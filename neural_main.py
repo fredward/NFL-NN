@@ -10,7 +10,7 @@ all our other classes
 '''
 
 def train(args):
-	try:
+	#try:
 		
 		inputs = []
 		targets = []
@@ -30,10 +30,9 @@ def train(args):
 		elif(args.db == 's'):
 			dl = Data_Loader()
 			print 'Creating SMOTE targets...'
-			i,t = dl.getSmoteTargets(y)
+			i,t = dl.getBLSmoteTargets(y,25)
 		inputs += i
 		targets += t
-		print len(inputs[0])
 		#create NN
 		# if file already exists, build on that training
 		if (os.path.exists(args.file)):
@@ -49,7 +48,7 @@ def train(args):
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
 		print "Neural Network saved to %s" % (args.file)
-	except Exception as e:
+	#except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
