@@ -13,7 +13,7 @@ class NFL_Predictor:
     Parameters:
         network:    a Neural_Network object
     '''
-    def __init__(self, network):
+    def __init__(self, network=None):
         self.nn = network
         
     '''

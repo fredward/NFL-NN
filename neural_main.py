@@ -3,30 +3,17 @@ from data_loader import Data_Loader
 from itertools import izip, count 
 from nfl_predictor import NFL_Predictor
 import os
+import argparse
 '''
 A main file, for directing user input from the highest level. Will load and use
 all our other classes
 '''
 
-
-
-import argparse
-
-
 def train(args):
-
 	try:
-		# if file already exists, build on that training
-		if (os.path.exists(args.file)):
-			print "file exists"
-			nn = Neural_Network.createFromFile(args.file)
-			pass
-		else:
-			print "file does not exist"
-			nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
+		
 		inputs = []
 		targets = []
-
 		y = range(args.start,args.end+1)
 		if(args.db == 'u'):
 			dl = Data_Loader()
@@ -46,6 +33,17 @@ def train(args):
 			i,t = dl.getSmoteTargets(y)
 		inputs += i
 		targets += t
+		print len(inputs[0])
+		#create NN
+		# if file already exists, build on that training
+		if (os.path.exists(args.file)):
+			print "file exists"
+			nn = Neural_Network.createFromFile(args.file)
+			pass
+		else:
+			print "file does not exist"
+			nn = Neural_Network.createWithRandomWeights(len(inputs[0]),args.nodes,len(targets[0]))
+		
 		#train NN with the given data
 		print 'Beginning Training...'
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
@@ -55,11 +53,13 @@ def train(args):
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
-	try:	
+	try:
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
+
 		#team = dl.getTeam(args.team, args.year)
 		team = dl.getTeam(args.team, args.year)
+
 		print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
 		post_processor = NFL_Predictor(nn)
 		similar_teams = post_processor.compareWithPastTeams(dl.getEveryTeam(), team, 15)
@@ -69,10 +69,14 @@ def predict(args):
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def cross_validate(args):
-	#try:	
+	encode = Data_Loader().encode
+	find_error = NFL_Predictor().compareVector
+	try:	
 		nn = Neural_Network.createFromFile(args.file)
-		totalCorrect = 0
+		totalCorrect = 0.0
+		total_tested = 0.0
 		for y in range(args.start,args.end+1):
+			classRight = [0, 0, 0, 0, 0, 0]
 			correct = incorrect = 0
 			if(args.db == 'u'):
 				dl = Data_Loader()
@@ -87,20 +91,31 @@ def cross_validate(args):
 				dl = Data_Loader('balancedData.csv')
 				teams = dl.getAllTeams(y)
 			print "testing %i teams from %i" % (len(teams),y)
+			total_tested += len(teams)
+			total_error = 0.0
 			for t in teams:
 				t.result = nn.feed_forward(t.stats)
+				error = (find_error(t.result, encode(t.classification)))**2
+				total_error += error
+				if error < .02:
+					correct += 1
+					classRight
+				print "team %s, results %s, class %s, error %s" % (t.name, t.result, encode(t.classification), error)
+				'''
 				max_index = max(izip(t.result, count()))[1] 
 				if (max_index == t.classification):
 					#print "%s (%d) Correct" % (t.name, y)
 					correct += 1
+					classRight[t.classification] += 1
 				else:
 					#print "%s (%d) incorrect" % (t.name, y)
 					incorrect += 1
 				pass
-			print "%d \t %d" % (y, correct)
+				'''
+			print "%d \t %d \t %s" % (y, correct, str(total_error))
 			totalCorrect += correct
-		print "totalCorrect: %d" % totalCorrect
-	#except Exception as e:
+		print "totalCorrect: %d, %f" % (totalCorrect, totalCorrect/total_tested)
+	except Exception as e:
 		print "invalid formatting, consult neural_main.py c --help \nError: %s" % e
 
 
