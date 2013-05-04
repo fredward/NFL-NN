@@ -14,6 +14,7 @@ TODO:
 
 class Data_Loader:
 
+    data_list = [0,1,2,3,4,5,6,8,11,17,21,22,23,29,35,39]
     def __init__(self,f=None):
         self.year_dict = {}
         # load the list of input vectors for a given year
@@ -37,17 +38,18 @@ class Data_Loader:
             #print (year,team)
             if year in self.year_dict:
                 data = [float(x) for x in data]
-                output = [0, 0, 0, 0, 0, 0]
                 classif = int(data.pop(0))
-                output[classif] = 1
+                output = self.encode(classif)
+                data = [data[i] for i in self.data_list]
                 self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
 
             else:
                 self.year_dict[year] = {}
                 data = [float(x) for x in data]
-                output = [0, 0, 0, 0, 0, 0]
+                
                 classif = int(data.pop(0))
-                output[classif] = 1
+                output = self.encode(classif)
+                data = [data[i] for i in self.data_list]
                 self.year_dict[year].setdefault(classif,[]).append(Team(name,year,data,classif))
 
             
@@ -57,11 +59,14 @@ class Data_Loader:
     helper, converts classification number to output encoding 
     i.e. 1-5 to [0,0,0,0,0,1] etc.
     '''
-    def encode(self, classification):
+    '''def encode(self, classification):
         o = [0,0,0,0,0,0]
         o[classification] = 1
         return o 
-    
+    '''
+    def encode(self, classification):
+        return [float(classification)/5]
+
     '''
     reverse encodes an output encoding to a classification number
     Parameters: 
@@ -69,8 +74,12 @@ class Data_Loader:
     Return:
         classification: an in representing the classification
     '''  
+    '''
     def rev_encode(self, encoding):
         return encoding.index(1)
+    '''
+    def rev_encode(self, enc_classification):
+        return enc_classification[0] * 5.0
 
     '''
     returns an ordered tuple of inputs, targets for the given year
@@ -97,9 +106,6 @@ class Data_Loader:
 	            inputs.append(choice(v).stats)
 	            targets.append(self.encode(k))
         return inputs,targets
-
-                    
-                
                     
 
     '''
@@ -131,8 +137,6 @@ class Data_Loader:
     def getTeam(self, team, year):
         return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
-
-  
 
 '''
 Testing

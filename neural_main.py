@@ -11,17 +11,9 @@ all our other classes
 
 def train(args):
 	try:
-		# if file already exists, build on that training
-		if (os.path.exists(args.file)):
-			print "file exists"
-			nn = Neural_Network.createFromFile(args.file)
-			pass
-		else:
-			print "file does not exist"
-			nn = Neural_Network.createWithRandomWeights(66,args.nodes,6)
+		
 		inputs = []
 		targets = []
-
 		y = range(args.start,args.end+1)
 		if(args.db == 'u'):
 			dl = Data_Loader()
@@ -31,7 +23,7 @@ def train(args):
 			i,t = dl.getBalancedTargets(y)
 		elif(args.db == 'p'):
 			dl = Data_Loader('playoffTeams.csv')
-			i,t = dl.getBalancedTargets(y)
+			i,t = dl.getTargets(y)
 		elif(args.db == 'o'):
 			dl = Data_Loader('balancedData.csv')
 			i,t = dl.getTargets(y)
@@ -39,9 +31,19 @@ def train(args):
 			dl = Data_Loader()
 			print 'Creating SMOTE targets...'
 			i,t = dl.getSmoteTargets(y)
-		
 		inputs += i
 		targets += t
+		print len(inputs[0])
+		#create NN
+		# if file already exists, build on that training
+		if (os.path.exists(args.file)):
+			print "file exists"
+			nn = Neural_Network.createFromFile(args.file)
+			pass
+		else:
+			print "file does not exist"
+			nn = Neural_Network.createWithRandomWeights(len(inputs[0]),args.nodes,len(targets[0]))
+		
 		#train NN with the given data
 		print 'Beginning Training...'
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
@@ -54,7 +56,10 @@ def predict(args):
 	try:
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
-		teams = dl.getTeams(args.team, args.year)
+
+		#team = dl.getTeam(args.team, args.year)
+		team = dl.getTeam(args.team, args.year)
+
 		print "RESULTS: %s \n EXPECTED: %s" % (nn.feed_forward(team.stats), dl.encode(team.classification))
 		post_processor = NFL_Predictor(nn)
 		similar_teams = post_processor.compareWithPastTeams(dl.getEveryTeam(), team, 15)
@@ -64,9 +69,12 @@ def predict(args):
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def cross_validate(args):
+	encode = Data_Loader().encode
+	find_error = NFL_Predictor().compareVector
 	try:	
 		nn = Neural_Network.createFromFile(args.file)
-		totalCorrect = 0
+		totalCorrect = 0.0
+		total_tested = 0.0
 		for y in range(args.start,args.end+1):
 			classRight = [0, 0, 0, 0, 0, 0]
 			correct = incorrect = 0
@@ -82,8 +90,18 @@ def cross_validate(args):
 			elif(args.db == 'o'):
 				dl = Data_Loader('balancedData.csv')
 				teams = dl.getAllTeams(y)
+			print "testing %i teams from %i" % (len(teams),y)
+			total_tested += len(teams)
+			total_error = 0.0
 			for t in teams:
 				t.result = nn.feed_forward(t.stats)
+				error = (find_error(t.result, encode(t.classification)))**2
+				total_error += error
+				if error < .02:
+					correct += 1
+					classRight
+				print "team %s, results %s, class %s, error %s" % (t.name, t.result, encode(t.classification), error)
+				'''
 				max_index = max(izip(t.result, count()))[1] 
 				if (max_index == t.classification):
 					#print "%s (%d) Correct" % (t.name, y)
@@ -93,9 +111,10 @@ def cross_validate(args):
 					#print "%s (%d) incorrect" % (t.name, y)
 					incorrect += 1
 				pass
-			print "%d \t %d \t %s" % (y, correct, str(classRight))
+				'''
+			print "%d \t %d \t %s" % (y, correct, str(total_error))
 			totalCorrect += correct
-		print "totalCorrect: %d" % totalCorrect
+		print "totalCorrect: %d, %f" % (totalCorrect, totalCorrect/total_tested)
 	except Exception as e:
 		print "invalid formatting, consult neural_main.py c --help \nError: %s" % e
 
@@ -109,7 +128,7 @@ Create a parser for the train command, specified with 't'
 '''
 parser_train = subparsers.add_parser('t',help='train a NN over start-end years for e epochs')
 parser_train.add_argument('nodes',type=int,help='number of hidden nodes')
-parser_train.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, p:playoffTeams, s: SMOTE (not implemented)',choices="uobps")
+parser_train.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, p:playoffTeams, s: SMOTE',choices="uobps")
 parser_train.add_argument('start',type=int,help='starting year to train on')
 parser_train.add_argument('end',type=int,help='ending year')
 parser_train.add_argument('epochs',type=int,help='number of epochs to train for')
@@ -124,7 +143,7 @@ Create a parser for the cross_validate command, specified with 'c'
 parser_cross = subparsers.add_parser('c',help='compare predicted outcomes with actual outcomes')
 parser_cross.add_argument('start',type=int,help='starting year to train on')
 parser_cross.add_argument('end',type=int,help='ending year')
-parser_cross.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, p:playoffTeams, s: SMOTE (not implemented)',choices="uobps")
+parser_cross.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, p:playoffTeams',choices="uobp")
 parser_cross.add_argument('file',type=str,help='NN input file')
 # set the function to be called when this parses is used
 parser_cross.set_defaults(func=cross_validate)
