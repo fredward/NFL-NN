@@ -214,9 +214,9 @@ class Data_Loader:
         new = []
         for i1,i2 in zip(v1,v2):
             new.append(i1+((i2-i1)*(random())))
-        print "old1: " +str(v1)
-        print "old2: " +str(v2)
-        print "new:  " + str(new)
+        #print "old1: " +str(v1)
+        #print "old2: " +str(v2)
+        #print "new:  " + str(new)
         return new
     
     '''
