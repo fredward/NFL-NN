@@ -31,7 +31,7 @@ class SmoteTools:
 	'''
 	def getBorderLineTeams(self, all_teams, classification):
 		bl_teams = []
-		class_teams = filter(lambda t: t.classification = classification, all_teams)
+		class_teams = filter(lambda t: t.classification == classification, all_teams)
 		for ct in class_teams:
 			ct_neighbors = self.getClosestNeighbors(ct, all_teams, self.neighbor_num)
 			neighbors_in_class = len(filter(lambda t:t.classification == ct.classification, ct_neighbors))
