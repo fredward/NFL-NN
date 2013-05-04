@@ -116,7 +116,7 @@ def cross_validate(args):
 				'''
 			print "%d \t %d \t %s" % (y, correct, str(total_error))
 			totalCorrect += correct
-		print "totalCorrect: %d, %f" % (totalCorrect, totalCorrect/total_tested)
+		print "totalCorrect: %i/%i, %f" % (totalCorrect, total_tested, totalCorrect/total_tested)
 	except Exception as e:
 		print "invalid formatting, consult neural_main.py c --help \nError: %s" % e
 

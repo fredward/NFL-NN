@@ -42,7 +42,7 @@ def getBorderLineTeams(all_teams, classification):
 		ct_neighbors = getClosestNeighbors(ct, all_teams, neighbor_num)
 		neighbors_in_class = len(filter(lambda t:t.classification == ct.classification, ct_neighbors))
 		neighbors_out_of_class = len(filter(lambda t: t.classification != ct.classification, ct_neighbors))
-		if neighbors_in_class > 0 and neighbors_out_of_class > neighbors_in_class:
+		if neighbors_in_class > 2 and neighbors_out_of_class > neighbors_in_class:
 			bl_teams.append(ct)
 	return bl_teams
 		
