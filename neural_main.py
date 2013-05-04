@@ -73,6 +73,7 @@ def cross_validate(args):
 	find_error = NFL_Predictor().compareVector
 	try:	
 		nn = Neural_Network.createFromFile(args.file)
+		print "Loaded Neural Network with %i hidden nodes" % len(nn.hidden_nodes)
 		totalCorrect = 0.0
 		total_tested = 0.0
 		for y in range(args.start,args.end+1):
@@ -100,7 +101,8 @@ def cross_validate(args):
 				if error < .1:
 					correct += 1
 					classRight
-				print "team %s, results %s, class %s, error %s" % (t.name, t.result, encode(t.classification), error)
+				if args.v:
+					print "team %s, results %s, class %s, error %s" % (t.name, t.result, encode(t.classification), error)
 				'''
 				max_index = max(izip(t.result, count()))[1] 
 				if (max_index == t.classification):
@@ -145,6 +147,7 @@ parser_cross.add_argument('start',type=int,help='starting year to train on')
 parser_cross.add_argument('end',type=int,help='ending year')
 parser_cross.add_argument('db',type=str,help='data balancing method, u: unbalanced, o: oversampled, b:undersampled, p:playoffTeams',choices="uobp")
 parser_cross.add_argument('file',type=str,help='NN input file')
+parser_cross.add_argument('-v',action='store_true')
 # set the function to be called when this parses is used
 parser_cross.set_defaults(func=cross_validate)
 
