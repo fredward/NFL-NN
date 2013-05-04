@@ -13,7 +13,7 @@ class SmoteTools:
 	returns a tuple of lists of stats, encoded targets for a specific classification
 	Parameters:
 		all_teams: all teams in the data set, as Team objects
-		classificaton: the classification to do SMOTE processing on
+		classification: the classification to do SMOTE processing on
 		num: number of 
 	'''
 	def performBorderLineSmote(self, all_teams, classification, num):

@@ -106,6 +106,50 @@ class Data_Loader:
 	            inputs.append(choice(v).stats)
 	            targets.append(self.encode(k))
         return inputs,targets
+
+
+    '''
+    Will perform SMOTE oversampling to fix data imbalance problem in our data
+    Parameters:
+        years:  a list of years that we should do SMOTE processing on
+    Return:
+        a tuple of ordered lists representing the input stats and target results for ever
+        team and SMOTE-produced synthetic team in the years provided
+    '''
+    def getSmoteTargets(self, years):
+        pre_all_years = {}
+        oversampled = []
+        #for all the year range, make a list of lists by classifications - lists are tuple (input, target)
+        for y in years:
+            for (c,ts) in self.year_dict[y].items():
+                map(lambda t: pre_all_years.setdefault(c,[]).append(t), ts)
+           # map(lambda (c,l): all_years[c].append((l, self.encode(c))), zip(self.year_dict[y].keys(), self.year_dict[y].values()))
+            #print str(all_years)
+        all_years = {}#pre_all_years
+        for i in range(20):
+        	for k in pre_all_years.keys():
+        		all_years.setdefault(k, []).append(choice(pre_all_years[k]))
+        largest_classification = reduce(lambda m,l:  max(m, len(l)), all_years.values(), 0)
+        #print "years: "+ all_years
+        for l,c in all_years.items():
+            oversample_amount = 3#largest_classification/float(len(c))
+            #print "amount: " + str(oversample_amount)
+            #print len(c)
+            if oversample_amount > 1:
+             #   print "in range for smote"
+                for i in range(len(c)):
+                    t = c[i]
+                    number_of_neighbors = int(round(oversample_amount))
+                    neighbors = self.getClosestNeighbors(t, c, number_of_neighbors)
+                    new_data = map(lambda n: (self.vectorBetweenVectors(t.stats,n.stats), self.encode(t.classification)), neighbors)
+                    oversampled+=new_data
+            else:
+                #print "over threshold for smote: " +str(self.encode(c[0].classification))
+                oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
+        inputs, targets = zip(*oversampled)
+        return inputs, targets
+                    
+                
                     
 
     '''
@@ -136,6 +180,8 @@ class Data_Loader:
     '''
     def getTeam(self, team, year):
         return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
+
+
 
 '''
 Testing
