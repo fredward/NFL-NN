@@ -137,7 +137,6 @@ class Data_Loader:
     def getTeam(self, team, year):
         return filter(lambda t: t.name == team,self.getAllTeams(year))[0]
 
-
 '''
 Testing
 '''     
