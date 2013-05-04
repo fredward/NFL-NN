@@ -13,7 +13,7 @@ class SmoteTools:
 	returns a tuple of lists of stats, encoded targets for a specific classification
 	Parameters:
 		all_teams: all teams in the data set, as Team objects
-		classificaton: the classification to do SMOTE processing on
+		classification: the classification to do SMOTE processing on
 		num: number of 
 	'''
 	def performBorderLineSmote(self, all_teams, classification, num):
@@ -31,7 +31,7 @@ class SmoteTools:
 	'''
 	def getBorderLineTeams(self, all_teams, classification):
 		bl_teams = []
-		class_teams = filter(lambda t: t.classification = classification, all_teams)
+		class_teams = filter(lambda t: t.classification == classification, all_teams)
 		for ct in class_teams:
 			ct_neighbors = self.getClosestNeighbors(ct, all_teams, self.neighbor_num)
 			neighbors_in_class = len(filter(lambda t:t.classification == ct.classification, ct_neighbors))
