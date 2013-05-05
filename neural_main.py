@@ -29,8 +29,7 @@ def train(args):
 			i,t = dl.getTargets(y)
 		elif(args.db == 's'):
 			dl = Data_Loader()
-			print 'Creating SMOTE targets...'
-			i,t = dl.getBLSmoteTargets(y,35)
+			i,t = dl.getBLSmoteTargets(y,.05)
 			#i,t = dl.getSmoteTargets(y)
 		inputs += i
 		targets += t

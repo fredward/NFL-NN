@@ -1,5 +1,6 @@
 from math import ceil,sqrt
 from random import sample, random, choice
+from itertools import cycle
 
 
 neighbor_num = 10
@@ -42,7 +43,7 @@ def getBorderLineTeams(all_teams, classification):
 		ct_neighbors = getClosestNeighbors(ct, all_teams, neighbor_num)
 		neighbors_in_class = len(filter(lambda t:t.classification == ct.classification, ct_neighbors))
 		neighbors_out_of_class = len(filter(lambda t: t.classification != ct.classification, ct_neighbors))
-		if neighbors_in_class > 2 and neighbors_out_of_class > neighbors_in_class:
+		if neighbors_in_class > 1 and neighbors_out_of_class > neighbors_in_class:
 			bl_teams.append(ct)
 	return bl_teams
 		
@@ -100,13 +101,13 @@ def getClosestNeighbors(t, neighbors, num):
 	# we need at least as many teams as there are closest neighbors required
 	#distances_to_team = map(lambda m: (t, self.compareVector(t.stats, m.stats)), neighbors)
 
-	sorted_distances = sorted(neighbors, key = lambda m: compareVector(t.stats, m.stats))
+	sorted_distances = cycle(sorted(neighbors, key = lambda m: compareVector(t.stats, m.stats)))
 	similar_teams = []
 	#fill up the list at the end with duplicates if we dont have enough
-	while len(sorted_distances) < num:
-		sorted_distances.append(choice(neighbors))
+	#while len(sorted_distances) < num:
+	#	sorted_distances.append(choice(neighbors))
 	for i in range(num):
-		similar_teams.append(sorted_distances.pop(0))
+		similar_teams.append(sorted_distances.next())
 	#print "simteam l " +str(len(similar_teams))
 	return similar_teams
 	

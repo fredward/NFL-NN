@@ -3,7 +3,7 @@ import itertools
 import smote
 from team import Team
 from random import choice, random, sample
-from math import pow, sqrt
+from math import pow, sqrt, ceil
 
 
 '''
@@ -114,25 +114,38 @@ class Data_Loader:
     Return Value:
         inputs, targets
     '''
-    def getBLSmoteTargets(self,years,N):
+    def getBLSmoteTargets(self,years,R):
+        print "Creating SMOTE targets..."
+        smote_count = 0
         inputs = []
         targets = []
         all_teams = []
         all_years = {}
+        
+        # build a class dictionary for all the years, must be done for SMOTE
         for year in years:
             for k,v in self.year_dict[year].items():
                 all_years.setdefault(k,[]).extend(v)
                 all_teams += v
+        # find the largest class size and then increase it by R% for the new fill size
+        largest_class_size = max(map(lambda c: len(c),all_years.values()))
+        fill_size = int(ceil((1.0+R)*largest_class_size))
+        
+        # fill the inputs, targets, with SMOTE synthetics values
         for k,v in all_years.items():
-            #print len(v), (N*len(years)-len(v))
-            i,t =  smote.performBorderLineSmote(all_teams,k,(N*len(years)-len(v)))
+            
+            new_smote_number = (fill_size - len(v))
+            smote_count += new_smote_number
+            
+            i,t =  smote.performBorderLineSmote(all_teams,k,new_smote_number)
             inputs += i
             targets += t
 
-        #teams = sample(zip(self.getTargets(years)[0],self.getTargets(years)[1]),Nreal)
+        # fill the i,t with the data set values
         i,t = self.getTargets(years)
         inputs += i
         targets += t
+        print "Created %i SMOTE targets" % smote_count        
         return inputs, targets
         
 
