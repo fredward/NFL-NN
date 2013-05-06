@@ -104,11 +104,9 @@ def getClosestNeighbors(t, neighbors, num):
 	sorted_distances = cycle(sorted(neighbors, key = lambda m: compareVector(t.stats, m.stats)))
 	similar_teams = []
 	#fill up the list at the end with duplicates if we dont have enough
-	#while len(sorted_distances) < num:
-	#	sorted_distances.append(choice(neighbors))
 	for i in range(num):
 		similar_teams.append(sorted_distances.next())
-	#print "simteam l " +str(len(similar_teams))
+
 	return similar_teams
 	
 '''

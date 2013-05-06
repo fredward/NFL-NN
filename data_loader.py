@@ -14,6 +14,7 @@ TODO:
 
 class Data_Loader:
 
+    #the list of which stats to use, we realized we were using far to many so we picked the 16 most important
     data_list = [0,1,2,3,4,5,6,8,11,17,21,22,23,29,35,39]
     def __init__(self,f=None):
         self.year_dict = {}
@@ -23,19 +24,16 @@ class Data_Loader:
             datafile = open('scaledData.csv', 'rU')
         else:
             datafile = open(f, 'rU')
-        #datareader = csv.reader(datafile, dialect=csv.excel_tab)
+   
 
         #skip first line
         datafile.readline()
         for row in datafile:
             data = row.strip().split(',')
-            #print "Row :" + str(data) + "\n"
-            #print "Year: " + str(year) + "\ndata[1] :" + str(data[1]) + "\n"
-            
-            #print "SAME!\n"
+   
             (name,year) = (data.pop(0),int(data.pop(0)))
     
-            #print (year,team)
+   
             if year in self.year_dict:
                 data = [float(x) for x in data]
                 classif = int(data.pop(0))
@@ -164,20 +162,17 @@ class Data_Loader:
         for y in years:
             for (c,ts) in self.year_dict[y].items():
                 map(lambda t: pre_all_years.setdefault(c,[]).append(t), ts)
-           # map(lambda (c,l): all_years[c].append((l, self.encode(c))), zip(self.year_dict[y].keys(), self.year_dict[y].values()))
-            #print str(all_years)
+    
         all_years = {}#pre_all_years
         for i in range(20):
         	for k in pre_all_years.keys():
         		all_years.setdefault(k, []).append(choice(pre_all_years[k]))
         largest_classification = reduce(lambda m,l:  max(m, len(l)), all_years.values(), 0)
-        #print "years: "+ all_years
+   
         for l,c in all_years.items():
             oversample_amount = 3#largest_classification/float(len(c))
-            #print "amount: " + str(oversample_amount)
-            #print len(c)
+   
             if oversample_amount > 1:
-             #   print "in range for smote"
                 for i in range(len(c)):
                     t = c[i]
                     number_of_neighbors = int(round(oversample_amount))
@@ -185,7 +180,6 @@ class Data_Loader:
                     new_data = map(lambda n: (smote.vectorBetweenVectors(t.stats,n.stats), self.encode(t.classification)), neighbors)
                     oversampled+=new_data
             else:
-                #print "over threshold for smote: " +str(self.encode(c[0].classification))
                 oversampled+= map(lambda t: (t.stats, self.encode(t.classification)), c)
         inputs, targets = zip(*oversampled)
         return inputs, targets
@@ -229,8 +223,6 @@ Testing
 '''     
 if __name__ == "__main__":  
     dl = Data_Loader()
-    #print dl.getBalancedTargets(2000)
-    #print dl.getAllTeams(1992)
     all_i, all_t =  dl.getSmoteTargets([2008, 2009,2010,2011])
     smote = zip(all_i, all_t)
     smote_test_dict = {}
