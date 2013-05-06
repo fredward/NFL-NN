@@ -11,7 +11,7 @@ all our other classes
 '''
 
 def train(args):
-	#try:
+	try:
 		
 		inputs = []
 		targets = []
@@ -49,7 +49,7 @@ def train(args):
 		nn = nn.train(args.epochs,inputs,targets,args.learn_rate)
 		nn.saveToFile(args.file)
 		print "Neural Network saved to %s" % (args.file)
-	#except Exception as e:
+	except Exception as e:
 		print "invalid formatting, consult neural_main.py t --help \n Error: %s" % e
 
 def predict(args):
