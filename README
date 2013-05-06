@@ -1,0 +1,56 @@
+README
+Our code is written in Python, so a working python 2.7.2 interpreter is required. There are several things you can do from the command line: train, predict, and cross validate. 
+
+All syntax for the neural_main.py execution, and argument specifications can be accessed with the usual '--help' flag 
+(Note: the '--help' flag can also be used for each sub command train, predict, validate ex: neural_main.py t --help)
+
+
+To train a new neural network (starting from random initial weights), the you must specify:
+	1. The number of hidden nodes
+	2. The data data balancing method you desired
+		⁃ u: all teams, unbalanced
+		⁃ b: under sampled set (one team from each class)
+		⁃ o: oversampled set (randomized repeats to equalize class #s)
+		⁃ p: unbalanced, but only playoff teams (excludes class 0)
+		⁃ s: Borderline SMOTE balanced (creates synthetic minority data points along import dividing lines between classes) (RECOMMENDED)
+	3. The year we want to start training from 
+	4. The year we want to end training at
+	5. The number of epochs we want to train over
+	6. The learning rate
+	7. The output file for the neural network
+
+A sample train argument looks something like this:
+$ python neural_main.py t 150 s 2005 2008 100 .1 sample.nn
+
+
+Which has an interpretation like this:
+python neural_main.py [training] [150 hidden nodes] [Borderline SMOTE balanced data] [start year 2005] [end year 2008] [100 epochs] [learning rate of .1] [filename = sample.nn]
+
+To predict from the command line we must specify 
+	1. The team name (three letter code, use the 'neural_main.py teams' option)
+	2. The year
+	3. The neural network file
+	4. options argument -se (show_expected): shows the expected output for validation
+
+A sample prediction argument looks something like this:
+python neural_main.py p nwe 2005 savedWeights.nn
+
+Which has an interpretation like this:
+python neural_main.py [predict] [New England Patriots] [in the year 2005] [using the neural network in savedWeights.nn]
+
+To cross validate from the command line we must specify 
+	1. The start date
+	2. The end date
+	3. What kind of balancing should be performed on the data
+		- u: all the teams (RECOMMENDED for testing)
+		- p: only playoff teams
+	4. The set of saved weights we want to use
+
+A sample prediction argument looks something like this:
+python neural_main.py c 2005 2008 p savedWeights.nn
+
+Which has an interpretation like this:
+python neural_main.py [cross validate] [start year 2005] [end year 2008] [using the weights saved in savedWeights.nn]
+
+To get the list of teams and their corresponding codes use:
+python neural_main.py teams

@@ -54,7 +54,6 @@ def train(args):
 
 def predict(args):
 	try:
-
 		nn = Neural_Network.createFromFile(args.file)
 		dl = Data_Loader()
 
@@ -119,6 +118,9 @@ def cross_validate(args):
 	except Exception as e:
 		print "invalid formatting, consult neural_main.py c --help \nError: %s" % e
 
+def show_teams(args):
+	for d in sorted(team_dict.teams.items(),key=lambda (k,v): v):
+		print "%s: %s" % d
 
 parser = argparse.ArgumentParser(description='Predict NFL playoff results with OR train a neural network on NFL results')
 
@@ -162,5 +164,11 @@ parser_pred.add_argument('-se','--show_expected',action='store_true',help='show 
 # set the function to be called when this parser is used
 parser_pred.set_defaults(func=predict)
 
+'''
+parser for showing teams
+'''
+
+parser_teams = subparsers.add_parser('teams',help='show the team codes')
+parser_teams.set_defaults(func=show_teams)
 args = parser.parse_args()
 args.func(args)
